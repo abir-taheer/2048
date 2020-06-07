@@ -46,17 +46,21 @@ public class World extends ActorWorld {
 		if(direction.equals("LEFT")){
 			dir = Location.WEST;
 		}
+		if(direction.equals("DOWN") || direction.equals("UP") || direction.equals("LEFT") || direction.equals("RIGHT")) {
+			shiftValues(dir);
 
-		shiftValues(dir);
+			refreshTiles();
+			
+			win();
 
-		refreshTiles();
-
-		ArrayList<Tile> emptyTiles = getEmptyTiles();
-
-		if(emptyTiles.size() > 0){
-			generateTile(emptyTiles);
-		} else {
-			System.out.println("User lost");
+			ArrayList<Tile> emptyTiles = getEmptyTiles();
+			
+			if(emptyTiles.size() > 0){
+				generateTile(emptyTiles);
+			}
+			else {
+				pairsLeft();
+			}
 		}
 	}
 
@@ -123,4 +127,40 @@ public class World extends ActorWorld {
 		Tile newTile = new Tile2();
 		newTile.putSelfInGrid(getGrid(), loc);
 	}
+	public void pairsLeft(){
+			Grid grid = getGrid();
+			int counter = 0;
+			for(int i = 0; i < 4; i++) {
+				for(int j = 0; j < 4; j++) {
+					if(j != 3) {
+						Location loc = new Location(j, i);
+						Location loc2 = loc.getAdjacentLocation(Location.SOUTH);
+						if(((Tile) grid.get(loc)).getValue() != ((Tile) grid.get(loc2)).getValue()) {
+							counter++;
+						}
+                                        }
+					if(i != 3) {
+						Location loc = new Location(j, i);
+						Location loc2 = loc.getAdjacentLocation(Location.EAST);
+						if(((Tile) grid.get(loc)).getValue() != ((Tile) grid.get(loc2)).getValue()) {
+							counter++;
+						}
+					}
+				}
+			}
+			if(counter >= 24) {
+				System.out.println("User lost!");
+			}
+	}
+	public void win(){
+		Grid grid = getGrid();
+		ArrayList<Location> occLocs = grid.getOccupiedLocations();
+		for(int i = 0; i < occLocs.size; i++) {
+			if(((Tile) grid.get(occLocs.get(i))).getValue() == 2048) {
+				System.out.println("User wins!");
+				break;
+			}
+		}
+	}
+		
 }
