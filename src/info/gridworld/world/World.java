@@ -47,6 +47,7 @@ public class World<T>
     private static final int DEFAULT_ROWS = 4;
     private static final int DEFAULT_COLS = 4;
 
+
     public World()
     {
         this(new BoundedGrid<T>(DEFAULT_ROWS, DEFAULT_COLS));
