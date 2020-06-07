@@ -53,7 +53,7 @@ public class GUIController<T>
             + (MAX_DELAY_MSECS - MIN_DELAY_MSECS) / 2;
 
     private Timer timer;
-    private JButton stepButton, runButton, stopButton;
+    private JButton stopButton;
     private JComponent controlPanel;
     private GridPanel display;
     private WorldFrame<T> parentFrame;
@@ -164,8 +164,6 @@ public class GUIController<T>
         display.setToolTipsEnabled(false); // hide tool tips while running
         parentFrame.setRunMenuItemsEnabled(false);
         stopButton.setEnabled(true);
-        stepButton.setEnabled(false);
-        runButton.setEnabled(false);
         numStepsSoFar = 0;
         timer.start();
         running = true;
@@ -180,8 +178,6 @@ public class GUIController<T>
         parentFrame.setRunMenuItemsEnabled(true);
         timer.stop();
         stopButton.setEnabled(false);
-        runButton.setEnabled(true);
-        stepButton.setEnabled(true);
         running = false;
     }
 
@@ -197,24 +193,14 @@ public class GUIController<T>
     private void makeControls()
     {
         controlPanel = new JPanel();
-        stepButton = new JButton(resources.getString("button.gui.step"));
-        runButton = new JButton(resources.getString("button.gui.run"));
         stopButton = new JButton(resources.getString("button.gui.stop"));
         
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.X_AXIS));
         controlPanel.setBorder(BorderFactory.createEtchedBorder());
         
-        Dimension spacer = new Dimension(5, stepButton.getPreferredSize().height + 10);
-        
         controlPanel.add(Box.createRigidArea(spacer));
-
-        controlPanel.add(stepButton);
-        controlPanel.add(Box.createRigidArea(spacer));
-        controlPanel.add(runButton);
         controlPanel.add(Box.createRigidArea(spacer));
         controlPanel.add(stopButton);
-        runButton.setEnabled(false);
-        stepButton.setEnabled(false);
         stopButton.setEnabled(false);
 
         controlPanel.add(Box.createRigidArea(spacer));
@@ -240,20 +226,6 @@ public class GUIController<T>
         controlPanel.add(new JLabel(resources.getString("slider.gui.fast")));
         controlPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 
-        stepButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                step();
-            }
-        });
-        runButton.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e)
-            {
-                run();
-            }
-        });
         stopButton.addActionListener(new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
