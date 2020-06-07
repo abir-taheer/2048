@@ -1,6 +1,6 @@
-/* 
+/*
  * AP(r) Computer Science GridWorld Case Study:
- * Copyright(c) 2002-2006 College Entrance Examination Board 
+ * Copyright(c) 2002-2006 College Entrance Examination Board
  * (http://www.collegeboard.com).
  *
  * This code is free software; you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * @author Julie Zelenski
  * @author Cay Horstmann
  */
@@ -52,7 +52,7 @@ public class GUIController<T>
     private static final int INITIAL_DELAY = MIN_DELAY_MSECS
             + (MAX_DELAY_MSECS - MIN_DELAY_MSECS) / 2;
     //
-    
+
     private Timer timer;
     private JButton stopButton;
     private JComponent controlPanel;
@@ -79,7 +79,7 @@ public class GUIController<T>
         display = disp;
         parentFrame = parent;
         this.displayMap = displayMap;
-        makeControls();
+//        makeControls();
 
         occupantClasses = new TreeSet<Class>(new Comparator<Class>()
         {
@@ -195,16 +195,16 @@ public class GUIController<T>
     {
         controlPanel = new JPanel();
         stopButton = new JButton(resources.getString("button.gui.stop"));
-        
+
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.X_AXIS));
         controlPanel.setBorder(BorderFactory.createEtchedBorder());
-        
-        controlPanel.add(Box.createRigidArea(spacer));
-        controlPanel.add(Box.createRigidArea(spacer));
+
+//        controlPanel.add(Box.createRigidArea(spacer));
+//        controlPanel.add(Box.createRigidArea(spacer));
         controlPanel.add(stopButton);
         stopButton.setEnabled(false);
 
-        controlPanel.add(Box.createRigidArea(spacer));
+//        controlPanel.add(Box.createRigidArea(spacer));
         controlPanel.add(new JLabel(resources.getString("slider.gui.slow")));
         JSlider speedSlider = new JSlider(MIN_DELAY_MSECS, MAX_DELAY_MSECS,
                 INITIAL_DELAY);

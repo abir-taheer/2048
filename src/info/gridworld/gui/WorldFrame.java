@@ -1,6 +1,6 @@
-/* 
+/*
  * AP(r) Computer Science GridWorld Case Study:
- * Copyright(c) 2002-2006 College Entrance Examination Board 
+ * Copyright(c) 2002-2006 College Entrance Examination Board
  * (http://www.collegeboard.com).
  *
  * This code is free software; you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * @author Julie Zelenski
  * @author Chris Nevison
  * @author Cay Horstmann
@@ -120,14 +120,14 @@ public class WorldFrame<T> extends JFrame
 
         displayMap = new DisplayMap();
         String title = System.getProperty("info.gridworld.gui.frametitle");
-        if (title == null) title = resources.getString("frame.title"); 
+        if (title == null) title = resources.getString("frame.title");
         setTitle(title);
         setLocation(25, 15);
 
         URL appIconUrl = getClass().getResource("GridWorld.gif");
         ImageIcon appIcon = new ImageIcon(appIconUrl);
         setIconImage(appIcon.getImage());
-        
+
         makeMenus();
 
         JPanel content = new JPanel();
@@ -138,17 +138,17 @@ public class WorldFrame<T> extends JFrame
         display = new GridPanel(displayMap, resources);
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new
-           KeyEventDispatcher() 
+           KeyEventDispatcher()
            {
                public boolean dispatchKeyEvent(KeyEvent event)
                {
                    if (getFocusOwner() == null) return false;
                    String text = KeyStroke.getKeyStrokeForEvent(event).toString();
-                   final String PRESSED = "pressed ";                  
+                   final String PRESSED = "pressed ";
                    int n = text.indexOf(PRESSED);
                    if (n < 0) return false;
                    // filter out modifier keys; they are neither characters or actions
-                   if (event.getKeyChar() == KeyEvent.CHAR_UNDEFINED && !event.isActionKey()) 
+                   if (event.getKeyChar() == KeyEvent.CHAR_UNDEFINED && !event.isActionKey())
                        return false;
                    text = text.substring(0, n)  + text.substring(n + PRESSED.length());
                    boolean consumed = getWorld().keyPressed(text, display.getCurrentLocation());
@@ -156,7 +156,7 @@ public class WorldFrame<T> extends JFrame
                    return consumed;
                }
            });
-        
+
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.setViewport(new PseudoInfiniteViewport(scrollPane));
         scrollPane.setViewportView(display);
@@ -184,8 +184,8 @@ public class WorldFrame<T> extends JFrame
 
         makeNewGridMenu();
 
-        control = new GUIController<T>(this, display, displayMap, resources);
-        content.add(control.controlPanel(), BorderLayout.SOUTH);
+//        control = new GUIController<T>(this, display, displayMap, resources);
+//        content.add(control.controlPanel(), BorderLayout.SOUTH);
 
         messageArea = new JTextArea(2, 35);
         messageArea.setEditable(false);
@@ -244,7 +244,7 @@ public class WorldFrame<T> extends JFrame
     /**
      * Displays an error message
      * @param t the throwable that describes the error
-     * @param resource the resource whose .text/.title strings 
+     * @param resource the resource whose .text/.title strings
      * should be used in the dialog
      */
     public void showError(Throwable t, String resource)
@@ -494,7 +494,7 @@ public class WorldFrame<T> extends JFrame
             catch (SecurityException ex)
             {
                 // oh well...
-            }           
+            }
         }
         html += "</table>";
         html = "<html>" + html + "</html>";

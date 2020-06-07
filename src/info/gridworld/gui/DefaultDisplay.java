@@ -1,6 +1,6 @@
-/* 
+/*
  * AP(r) Computer Science GridWorld Case Study:
- * Copyright(c) 2002-2006 College Entrance Examination Board 
+ * Copyright(c) 2002-2006 College Entrance Examination Board
  * (http://www.collegeboard.com).
  *
  * This code is free software; you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * @author Alyce Brady
  * @author Jeff Raab, Northeastern University
  * @author Cay Horstmann
@@ -69,8 +69,8 @@ public class DefaultDisplay implements Display
             {
                 textColor = new Color(
                         255 - textColor.getRed(),
-                        255 - textColor.getGreen(), 
-                        255 - textColor.getBlue()); 
+                        255 - textColor.getGreen(),
+                        255 - textColor.getBlue());
             }
         }
         String text = (String) AbstractDisplay.getProperty(obj, "text");
@@ -81,7 +81,7 @@ public class DefaultDisplay implements Display
         if (text == null) return;
         if (text.length() > MAX_TEXT_LENGTH)
             text = text.substring(0, MAX_TEXT_LENGTH) + "...";
-        paintCenteredText(g2, text, rect, 0.8, textColor);
+        paintCenteredText(g2, text, rect, 2.5, textColor);
     }
 
     /**
