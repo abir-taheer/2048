@@ -51,7 +51,8 @@ public class GUIController<T>
     private static final int MIN_DELAY_MSECS = 10, MAX_DELAY_MSECS = 1000;
     private static final int INITIAL_DELAY = MIN_DELAY_MSECS
             + (MAX_DELAY_MSECS - MIN_DELAY_MSECS) / 2;
-
+    //
+    
     private Timer timer;
     private JButton stopButton;
     private JComponent controlPanel;
