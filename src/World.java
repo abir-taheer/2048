@@ -1,3 +1,4 @@
+import info.gridworld.actor.Actor;
 import info.gridworld.actor.ActorWorld;
 import info.gridworld.grid.Grid;
 import info.gridworld.grid.Location;
@@ -6,43 +7,6 @@ import tiles.Tile;
 import java.util.ArrayList;
 
 public class World extends ActorWorld {
-
-	public Tile[][] getColumns(boolean reverse){
-		Grid grid = getGrid();
-
-		Tile[][] columns = new Tile[4][4];
-
-		for (int column = 0; column < 4; column++) {
-
-			for (int row = 0; row < 4; row++) {
-
-				int actualRow = reverse ? 3 - row : row;
-
-				columns[column][row] = (Tile) grid.get(new Location(column, actualRow));
-			}
-		}
-
-		return columns;
-	}
-
-	public Tile[][] getRows(boolean reverse){
-		Grid grid = getGrid();
-
-		Tile[][] rows = new Tile[4][4];
-
-		for (int row = 0; row < 4; row++) {
-
-			for (int column = 0; column < 4; column++) {
-
-				int actualColumn = reverse ? 3 - column : column;
-
-				rows[row][column] = (Tile) grid.get(new Location(actualColumn, row));
-			}
-		}
-
-		return rows;
-	}
-
 	@Override
 	public boolean keyPressed(String description, Location loc) {
 		makeMove(description);
@@ -67,51 +31,103 @@ public class World extends ActorWorld {
 	}
 
 	public void makeMove(String direction){
-		Tile[][] order = new Tile[0][];
+		int dir = 0;
 
 		if(direction.equals("DOWN")){
-			order = getRows(false);
+			dir = Location.SOUTH;
 		}
 		if(direction.equals("UP")){
-			order = getRows(true);
+			dir = Location.NORTH;
+
 		}
 		if(direction.equals("RIGHT")){
-			order = getColumns(false);
+			dir = Location.EAST;
 		}
 		if(direction.equals("LEFT")){
-			order = getColumns(true);
+			dir = Location.WEST;
 		}
 
-		if(order.length > 0){
-			for (Tile[] tiles: order) {
-				shiftValues(tiles);
-			}
+		shiftValues(dir);
 
-			refreshTiles();
+		refreshTiles();
+
+		ArrayList<Tile> emptyTiles = getEmptyTiles();
+
+		if(emptyTiles.size() > 0){
+			generateTile(emptyTiles);
+		} else {
+			System.out.println("User lost");
 		}
 	}
 
-	public void shiftValues(Tile[] tiles){
-		for (int i = 0; i < tiles.length - 1; i++) {
-			Tile currentTile = tiles[i];
-			Tile nextTile = tiles[i + 1];
+	public void shiftValues(int dir) {
+		Grid<Actor> grid = getGrid();
 
-			int curTileVal = currentTile.getValue();
-			int nextTileVal = nextTile.getValue();
+		boolean isReversed = dir == Location.SOUTH || dir == Location.EAST;
 
-			// If it's an empty tile, don't do anything
-			if(curTileVal != 0){
+		boolean isVertical = dir == Location.SOUTH || dir == Location.NORTH;
 
-				if(nextTileVal == 0){
-					nextTile.setValue(curTileVal);
-					currentTile.setValue(0);
-				} else if(! currentTile.willChange() && nextTileVal == curTileVal) {
-					nextTile.setValue(nextTileVal + curTileVal);
-					currentTile.setValue(0);
+		for ( int outer = 0; outer < 4 ; outer ++ ){
+			int actualOuter = isReversed  ? 3 - outer : outer;
+
+			for (int inner = 0; inner < 4; inner++) {
+				int actualInner = isReversed ? 3 - inner : inner;
+				Location loc = isVertical ?
+						new Location(actualInner, actualOuter) :
+						new Location(actualOuter, actualInner);
+
+				boolean canExit = false;
+
+				Location adj = loc.getAdjacentLocation(dir);
+
+				while (grid.isValid(adj) && ! canExit){
+					Tile cur = (Tile) grid.get(loc);
+					Tile next = (Tile) grid.get(adj);
+					if( next.getValue() == 0 ){
+						next.removeSelfFromGrid();
+						cur.moveTo(adj);
+						next.putSelfInGrid(grid, loc);
+
+					} else if( ! next.willChange() && next.getValue() == cur.getValue() ) {
+						next.setValue(next.getValue() + cur.getValue());
+						cur.setValue(0);
+					} else {
+						canExit = true;
+					}
+					loc = adj;
+					adj = adj.getAdjacentLocation(dir);
 				}
-
 			}
 
 		}
+
+
+		refreshTiles();
+
+		ArrayList<Tile> emptyTiles = getEmptyTiles();
+
+		if(emptyTiles.size() > 0){
+//				generateTile(emptyTiles);
+		} else {
+			System.out.println("User lost");
+		}
+	}
+
+	public ArrayList<Tile> getEmptyTiles (){
+		Grid<Actor> grid = getGrid();
+		ArrayList<Tile> emptyTiles = new ArrayList<>();
+
+		for ( Location loc: grid.getOccupiedLocations()) {
+			Tile tile = (Tile) grid.get(loc);
+			if(tile.getValue() == 0){
+				emptyTiles.add(tile);
+			}
+		}
+		return emptyTiles;
+	}
+
+	public void generateTile(ArrayList<Tile> emptyTiles){
+		int randomIndex = (int) Math.floor(Math.random() * emptyTiles.size());
+		emptyTiles.get(randomIndex).setValue(2);
 	}
 }
