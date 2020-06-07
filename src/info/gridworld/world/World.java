@@ -1,4 +1,4 @@
-/* 
+/*
  * AP(r) Computer Science GridWorld Case Study:
  * Copyright(c) 2005-2006 Cay S. Horstmann (http://horstmann.com)
  *
@@ -10,7 +10,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * @author Cay Horstmann
  */
 
@@ -29,7 +29,7 @@ import java.util.TreeSet;
 import javax.swing.JFrame;
 
 /**
- * 
+ *
  * A <code>World</code> is the mediator between a grid and the GridWorld GUI.
  * <br />
  * This class is not tested on the AP CS A and AB exams.
@@ -44,8 +44,8 @@ public class World<T>
 
     private static Random generator = new Random();
 
-    private static final int DEFAULT_ROWS = 10;
-    private static final int DEFAULT_COLS = 10;
+    private static final int DEFAULT_ROWS = 4;
+    private static final int DEFAULT_COLS = 4;
 
     public World()
     {
@@ -126,7 +126,7 @@ public class World<T>
     /**
      * This method is called when the user clicks on a location in the
      * WorldFrame.
-     * 
+     *
      * @param loc the grid location that the user selected
      * @return true if the world consumes the click, or false if the GUI should
      * invoke the Location->Edit menu action
@@ -135,13 +135,13 @@ public class World<T>
     {
         return false;
     }
-    
+
     /**
      * This method is called when a key was pressed. Override it if your world wants
      * to consume some keys (e.g. "1"-"9" for Sudoku). Don't consume plain arrow keys,
-     * or the user loses the ability to move the selection square with the keyboard.   
-     * @param description the string describing the key, in 
-     * <a href="http://java.sun.com/javase/6/docs/api/javax/swing/KeyStroke.html#getKeyStroke(java.lang.String)">this format</a>. 
+     * or the user loses the ability to move the selection square with the keyboard.
+     * @param description the string describing the key, in
+     * <a href="http://java.sun.com/javase/6/docs/api/javax/swing/KeyStroke.html#getKeyStroke(java.lang.String)">this format</a>.
      * @param loc the selected location in the grid at the time the key was pressed
      * @return true if the world consumes the key press, false if the GUI should
      * consume it.

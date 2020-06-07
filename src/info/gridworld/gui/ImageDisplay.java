@@ -1,6 +1,6 @@
-/* 
+/*
  * AP(r) Computer Science GridWorld Case Study:
- * Copyright(c) 2002-2006 College Entrance Examination Board 
+ * Copyright(c) 2002-2006 College Entrance Examination Board
  * (http://www.collegeboard.com).
  *
  * This code is free software; you can redistribute it and/or modify
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * @author Julie Zelenski
  * @author Cay Horstmann
  */
@@ -56,6 +56,7 @@ public class ImageDisplay extends AbstractDisplay
     public ImageDisplay(Class cl) throws IOException
     {
         this.cl = cl;
+
         imageFilename = cl.getName().replace('.', '/');
         URL url = cl.getClassLoader().getResource(
                 imageFilename + imageExtension);
@@ -120,7 +121,7 @@ public class ImageDisplay extends AbstractDisplay
         int width = tinted.getWidth(null);
         int height = tinted.getHeight(null);
         int size = Math.max(width, height);
-        
+
         // Scale to shrink or enlarge the image to fit the size 1x1 cell.
         g2.scale(1.0 / size, 1.0 / size);
         g2.clip(new Rectangle(-width / 2, -height / 2, width, height));
@@ -164,14 +165,14 @@ public class ImageDisplay extends AbstractDisplay
             // We use a quadratic interpolation function
             // f(x) = 1 - 4 * (x - 0.5)^2 that has
             // the property f(0) = f(1) = 0, f(0.5) = 1
-            
+
             // Note: Julie's algorithm used a linear interpolation
             // function f(x) = min(2 - 2 * x, 2 * x);
-            // and it interpolated between tint and 
+            // and it interpolated between tint and
             // (lum < 0.5 ? black : white)
 
             double scale = 1 - (4 * ((lum - 0.5) * (lum - 0.5)));
-            
+
             red = (int) (tintR * scale + red * (1 - scale));
             green = (int) (tintG * scale + green * (1 - scale));
             blue = (int) (tintB * scale + blue * (1 - scale));
