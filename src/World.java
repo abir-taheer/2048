@@ -8,9 +8,11 @@ import tiles.Tile2;
 import java.util.ArrayList;
 
 public class World extends ActorWorld {
-	@Override
+	boolean winOrLose = false;
 	public boolean keyPressed(String description, Location loc) {
-		makeMove(description);
+		if(!winOrLose) { 
+			makeMove(description);
+		}
 		return true;
 	}
 
@@ -149,15 +151,17 @@ public class World extends ActorWorld {
 				}
 			}
 			if(counter >= 24) {
-				System.out.println("User lost!");
+				winOrLose = true;
+				setMessage("User lost!");
 			}
 	}
 	public void win(){
 		Grid grid = getGrid();
 		ArrayList<Location> occLocs = grid.getOccupiedLocations();
-		for(int i = 0; i < occLocs.size; i++) {
+		for(int i = 0; i < occLocs.size(); i++) {
 			if(((Tile) grid.get(occLocs.get(i))).getValue() == 2048) {
-				System.out.println("User wins!");
+				setMessage("User wins!");
+				winOrLose = true;
 				break;
 			}
 		}
