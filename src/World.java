@@ -3,6 +3,7 @@ import info.gridworld.actor.ActorWorld;
 import info.gridworld.grid.Grid;
 import info.gridworld.grid.Location;
 import tiles.Tile;
+import tiles.Tile2;
 
 import java.util.ArrayList;
 
@@ -10,7 +11,6 @@ public class World extends ActorWorld {
 	@Override
 	public boolean keyPressed(String description, Location loc) {
 		makeMove(description);
-
 		return true;
 	}
 
@@ -100,17 +100,6 @@ public class World extends ActorWorld {
 			}
 
 		}
-
-
-		refreshTiles();
-
-		ArrayList<Tile> emptyTiles = getEmptyTiles();
-
-		if(emptyTiles.size() > 0){
-//				generateTile(emptyTiles);
-		} else {
-			System.out.println("User lost");
-		}
 	}
 
 	public ArrayList<Tile> getEmptyTiles (){
@@ -128,6 +117,10 @@ public class World extends ActorWorld {
 
 	public void generateTile(ArrayList<Tile> emptyTiles){
 		int randomIndex = (int) Math.floor(Math.random() * emptyTiles.size());
-		emptyTiles.get(randomIndex).setValue(2);
+		Tile tile = emptyTiles.get(randomIndex);
+		Location loc = tile.getLocation();
+		tile.removeSelfFromGrid();
+		Tile newTile = new Tile2();
+		newTile.putSelfInGrid(getGrid(), loc);
 	}
 }
