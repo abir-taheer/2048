@@ -1,4 +1,4 @@
-/* 
+/*
  * AP(r) Computer Science GridWorld Case Study:
  * Copyright(c) 2005-2006 Cay S. Horstmann (http://horstmann.com)
  *
@@ -10,7 +10,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * @author Cay Horstmann
  */
 
@@ -18,11 +18,10 @@ package info.gridworld.gui;
 
 import info.gridworld.grid.Location;
 
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 import java.beans.PropertyEditorSupport;
 import java.text.NumberFormat;
-import javax.swing.JFormattedTextField;
-import javax.swing.JPanel;
 
 /**
  * A property editor for the Location type. <br />
@@ -30,44 +29,38 @@ import javax.swing.JPanel;
  * implementation details that are not intended to be understood by AP CS
  * students.
  */
-public class LocationEditor extends PropertyEditorSupport
-{
-    private JFormattedTextField rowField = new JFormattedTextField(NumberFormat
-            .getIntegerInstance());
-    private JFormattedTextField colField = new JFormattedTextField(NumberFormat
-            .getIntegerInstance());
-    private JPanel panel = new JPanel();
+public class LocationEditor extends PropertyEditorSupport {
+	private final JFormattedTextField rowField = new JFormattedTextField(NumberFormat
+			.getIntegerInstance());
+	private final JFormattedTextField colField = new JFormattedTextField(NumberFormat
+			.getIntegerInstance());
+	private final JPanel panel = new JPanel();
 
-    public LocationEditor()
-    {
-        rowField.setColumns(5);
-        colField.setColumns(5);
+	public LocationEditor() {
+		rowField.setColumns(5);
+		colField.setColumns(5);
 
-        panel.add(rowField);
-        panel.add(colField);
-    }
+		panel.add(rowField);
+		panel.add(colField);
+	}
 
-    public Object getValue()
-    {
-        int row = ((Number) rowField.getValue()).intValue();
-        int col = ((Number) colField.getValue()).intValue();
-        return new Location(row, col);
-    }
+	public Object getValue() {
+		int row = ((Number) rowField.getValue()).intValue();
+		int col = ((Number) colField.getValue()).intValue();
+		return new Location(row, col);
+	}
 
-    public void setValue(Object newValue)
-    {
-        Location loc = (Location) newValue;
-        rowField.setValue(new Integer(loc.getRow()));
-        colField.setValue(new Integer(loc.getCol()));
-    }
+	public void setValue(Object newValue) {
+		Location loc = (Location) newValue;
+		rowField.setValue(new Integer(loc.getRow()));
+		colField.setValue(new Integer(loc.getCol()));
+	}
 
-    public boolean supportsCustomEditor()
-    {
-        return true;
-    }
+	public boolean supportsCustomEditor() {
+		return true;
+	}
 
-    public Component getCustomEditor()
-    {
-        return panel;
-    }
+	public Component getCustomEditor() {
+		return panel;
+	}
 }
