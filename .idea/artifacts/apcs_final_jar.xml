@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="apcs-final:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/apcs_final_jar</output-path>
+    <root id="archive" name="apcs-final.jar">
+      <element id="module-output" name="apcs-final" />
+    </root>
+  </artifact>
+</component>

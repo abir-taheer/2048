@@ -141,7 +141,9 @@ public class World extends ActorWorld {
 						next.putSelfInGrid(grid, loc);
 						hasMoved = true;
 					} else if (
-						!next.willChange() && next.getValue() == cur.getValue()
+						!cur.willChange() &&
+						!next.willChange() &&
+						next.getValue() == cur.getValue()
 					) {
 						score += cur.getValue();
 						next.setValue(next.getValue() + cur.getValue());
