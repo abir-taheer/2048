@@ -54,14 +54,14 @@ public class World extends ActorWorld {
 
 			refreshTiles();
 
-			win();
+			checkWin();
 
 			ArrayList<Tile> emptyTiles = getEmptyTiles();
 
 			if (emptyTiles.size() > 0) {
 				generateTile(emptyTiles);
 			} else {
-				pairsLeft();
+				checkGameOver();
 			}
 		}
 	}
@@ -130,7 +130,7 @@ public class World extends ActorWorld {
 		newTile.putSelfInGrid(getGrid(), loc);
 	}
 
-	public void pairsLeft() {
+	public void checkGameOver() {
 		Grid grid = getGrid();
 		int counter = 0;
 		for (int i = 0; i < 4; i++) {
@@ -157,7 +157,7 @@ public class World extends ActorWorld {
 		}
 	}
 
-	public void win() {
+	public void checkWin() {
 		Grid grid = getGrid();
 		ArrayList<Location> occLocs = grid.getOccupiedLocations();
 		for (int i = 0; i < occLocs.size(); i++) {

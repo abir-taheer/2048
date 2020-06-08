@@ -28,7 +28,7 @@ import java.util.ArrayList;
  */
 
 public class ActorWorld extends World<Actor> {
-	private static final String DEFAULT_MESSAGE = "Click on a grid location to construct or manipulate an actor.";
+	private static final String DEFAULT_MESSAGE = "Use the arrow keys on your keyboard to play.";
 
 	/**
 	 * Constructs an actor world with a default grid.
