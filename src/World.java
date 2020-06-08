@@ -11,6 +11,13 @@ public class World extends ActorWorld {
 	int score = 0;
 	boolean hasMoved = false;
 
+	int[] directions = new int[] {
+		Location.NORTH,
+		Location.SOUTH,
+		Location.EAST,
+		Location.WEST,
+	};
+
 	public boolean keyPressed(String description, Location loc) {
 		if (!gameOver) {
 			makeMove(description);
@@ -22,7 +29,10 @@ public class World extends ActorWorld {
 	}
 
 	public void setup() {
-		setMessage("Use the arrow keys on your keyboard to play.");
+		score = 0;
+		setMessage(
+			"Use the arrow keys on your keyboard to play. Press C to play random moves."
+		);
 		Grid<Actor> grid = getGrid();
 		ArrayList<Location> locations = grid.getOccupiedLocations();
 
@@ -55,7 +65,7 @@ public class World extends ActorWorld {
 	}
 
 	public void makeMove(String direction) {
-		int dir = 0;
+		int dir = -1;
 
 		if (direction.equals("DOWN")) {
 			dir = Location.SOUTH;
@@ -69,13 +79,15 @@ public class World extends ActorWorld {
 		if (direction.equals("LEFT")) {
 			dir = Location.WEST;
 		}
-		if (
-			direction.equals("DOWN") ||
-			direction.equals("UP") ||
-			direction.equals("LEFT") ||
-			direction.equals("RIGHT")
-		) {
-			ArrayList<Location> tileLocations = getGrid().getOccupiedLocations();
+
+		if (direction.equals("C")) {
+			dir =
+				directions[(int) Math.floor(Math.random() * directions.length)];
+		}
+
+		if (dir != -1) {
+			ArrayList<Location> tileLocations = getGrid()
+				.getOccupiedLocations();
 			ArrayList beforeVals = getValueMappings(tileLocations);
 
 			shiftValues(dir);
@@ -83,8 +95,7 @@ public class World extends ActorWorld {
 
 			ArrayList afterVals = getValueMappings(tileLocations);
 
-			if(hasChanged(beforeVals, afterVals)){
-
+			if (hasChanged(beforeVals, afterVals)) {
 				setMessage("Score: " + score);
 
 				checkWin();
@@ -150,7 +161,7 @@ public class World extends ActorWorld {
 		ArrayList<Tile> emptyTiles = new ArrayList<>();
 		ArrayList<Tile> tiles = getTiles();
 
-		for (Tile tile: tiles) {
+		for (Tile tile : tiles) {
 			if (tile.getValue() == 0) {
 				emptyTiles.add(tile);
 			}
@@ -195,12 +206,6 @@ public class World extends ActorWorld {
 		}
 
 		Grid<Actor> grid = getGrid();
-		int[] directions = new int[] {
-			Location.NORTH,
-			Location.SOUTH,
-			Location.EAST,
-			Location.WEST,
-		};
 
 		ArrayList<Location> tiles = grid.getOccupiedLocations();
 		for (Location loc : tiles) {
@@ -244,26 +249,27 @@ public class World extends ActorWorld {
 
 	public boolean isWinner() {
 		ArrayList<Tile> tiles = getTiles();
-		for (Tile tile: tiles) {
-			if (tile.getValue() == 2048){
+		for (Tile tile : tiles) {
+			if (tile.getValue() == 2048) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-
-
-	public boolean hasChanged(ArrayList beforeMappings, ArrayList afterMappings){
+	public boolean hasChanged(
+		ArrayList beforeMappings,
+		ArrayList afterMappings
+	) {
 		for (int i = 0; i < beforeMappings.size(); i++) {
-			if (beforeMappings.get(i) != afterMappings.get(i)){
+			if (beforeMappings.get(i) != afterMappings.get(i)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public ArrayList<Tile> getTiles(){
+	public ArrayList<Tile> getTiles() {
 		Grid<Actor> grid = getGrid();
 		ArrayList<Location> locs = grid.getOccupiedLocations();
 		ArrayList<Tile> tiles = new ArrayList<>();
@@ -275,7 +281,7 @@ public class World extends ActorWorld {
 		return tiles;
 	}
 
-	public ArrayList getValueMappings(ArrayList<Location> locations){
+	public ArrayList getValueMappings(ArrayList<Location> locations) {
 		ArrayList values = new ArrayList();
 
 		for (Location loc : locations) {
@@ -284,5 +290,4 @@ public class World extends ActorWorld {
 		}
 		return values;
 	}
-
 }
