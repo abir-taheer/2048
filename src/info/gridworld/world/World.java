@@ -68,6 +68,18 @@ public class World<T> {
 		JOptionPane.showMessageDialog(frame, message);
 	}
 
+	public boolean confirmDialog(String title, String message) {
+		return (
+			JOptionPane.showConfirmDialog(
+				frame,
+				message,
+				title,
+				JOptionPane.YES_NO_OPTION
+			) ==
+			0
+		);
+	}
+
 	/**
 	 * Gets the grid managed by this world.
 	 *

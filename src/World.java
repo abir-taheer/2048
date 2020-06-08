@@ -13,8 +13,29 @@ public class World extends ActorWorld {
 	public boolean keyPressed(String description, Location loc) {
 		if (!gameOver) {
 			makeMove(description);
+		} else if (description.equals("R")) {
+			gameOver = false;
+			setup();
 		}
 		return true;
+	}
+
+	public void setup() {
+		setMessage("Use the arrow keys on your keyboard to play.");
+		Grid<Actor> grid = getGrid();
+		ArrayList<Location> locations = grid.getOccupiedLocations();
+
+		for (Location loc : locations) {
+			grid.get(loc).removeSelfFromGrid();
+		}
+
+		for (int i = 0; i < 16; i++) {
+			if (i == 15) {
+				this.add(new Tile2());
+			} else {
+				this.add(new Tile());
+			}
+		}
 	}
 
 	public void refreshTiles() {
@@ -138,9 +159,20 @@ public class World extends ActorWorld {
 
 	public void checkGameOver() {
 		if (isGameOver()) {
-			gameOver = true;
-			setMessage("Game is over. Final Score: " + score);
-			showDialog("You have lost.");
+			setMessage(
+				"Game is over. Final Score: " + score + ". Press R to restart."
+			);
+			boolean response = confirmDialog(
+				"Game Over",
+				"You have lost. Final score: " +
+				score +
+				".\n Do you want to replay?"
+			);
+			if (response) {
+				this.setup();
+			} else {
+				gameOver = true;
+			}
 		}
 	}
 
@@ -182,9 +214,20 @@ public class World extends ActorWorld {
 
 	public void checkWin() {
 		if (isWinner()) {
-			gameOver = true;
-			setMessage("You won! Final score: " + score);
-			showDialog("You've won! congrats!");
+			setMessage(
+				"You won! Final score: " + score + ". Press R to restart."
+			);
+			boolean response = confirmDialog(
+				"Winner",
+				"Congrats! You've reached 2048. Final score: " +
+				score +
+				".\n Do you want to replay?"
+			);
+			if (response) {
+				this.setup();
+			} else {
+				gameOver = true;
+			}
 		}
 	}
 
