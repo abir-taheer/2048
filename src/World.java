@@ -7,10 +7,11 @@ import tiles.Tile;
 import tiles.Tile2;
 
 public class World extends ActorWorld {
-	boolean winOrLose = false;
+	boolean gameOver = false;
+	int score = 0;
 
 	public boolean keyPressed(String description, Location loc) {
-		if (!winOrLose) {
+		if (!gameOver) {
 			makeMove(description);
 		}
 		return true;
@@ -56,15 +57,17 @@ public class World extends ActorWorld {
 
 			refreshTiles();
 
+			setMessage("Score: " + score);
+
 			checkWin();
 
 			ArrayList<Tile> emptyTiles = getEmptyTiles();
 
 			if (emptyTiles.size() > 0) {
 				generateTile(emptyTiles);
-			} else {
-				checkGameOver();
 			}
+
+			checkGameOver();
 		}
 	}
 
@@ -98,6 +101,7 @@ public class World extends ActorWorld {
 					} else if (
 						!next.willChange() && next.getValue() == cur.getValue()
 					) {
+						score += cur.getValue();
 						next.setValue(next.getValue() + cur.getValue());
 						cur.setValue(0);
 					} else {
@@ -133,47 +137,68 @@ public class World extends ActorWorld {
 	}
 
 	public void checkGameOver() {
-		Grid grid = getGrid();
-		int counter = 0;
-		for (int i = 0; i < 4; i++) {
-			for (int j = 0; j < 4; j++) {
-				if (j != 3) {
-					Location loc = new Location(j, i);
-					Location loc2 = loc.getAdjacentLocation(Location.SOUTH);
-					if (
-						((Tile) grid.get(loc)).getValue() !=
-						((Tile) grid.get(loc2)).getValue()
-					) {
-						counter++;
-					}
-				}
-				if (i != 3) {
-					Location loc = new Location(j, i);
-					Location loc2 = loc.getAdjacentLocation(Location.EAST);
-					if (
-						((Tile) grid.get(loc)).getValue() !=
-						((Tile) grid.get(loc2)).getValue()
-					) {
-						counter++;
-					}
-				}
-			}
-		}
-		if (counter >= 24) {
-			winOrLose = true;
-			setMessage("User lost!");
+		if (isGameOver()) {
+			gameOver = true;
+			setMessage("Game is over. Final Score: " + score);
+			showDialog("You have lost.");
 		}
 	}
 
-	public void checkWin() {
-		Grid grid = getGrid();
-		ArrayList<Location> occLocs = grid.getOccupiedLocations();
-		for (int i = 0; i < occLocs.size(); i++) {
-			if (((Tile) grid.get(occLocs.get(i))).getValue() == 2048) {
-				setMessage("User wins!");
-				winOrLose = true;
-				break;
+	public boolean isGameOver() {
+		ArrayList<Tile> emptyTiles = getEmptyTiles();
+
+		if (emptyTiles.size() > 0) {
+			return false;
+		}
+
+		Grid<Actor> grid = getGrid();
+		int[] directions = new int[] {
+			Location.NORTH,
+			Location.SOUTH,
+			Location.EAST,
+			Location.WEST,
+		};
+
+		ArrayList<Location> tiles = grid.getOccupiedLocations();
+		for (Location loc : tiles) {
+			Tile cur = (Tile) grid.get(loc);
+
+			for (int dir : directions) {
+				Location adj = loc.getAdjacentLocation(dir);
+				if (grid.isValid(adj)) {
+					Tile next = (Tile) grid.get(adj);
+
+					if (
+						!next.willChange() && next.getValue() == cur.getValue()
+					) {
+						return false;
+					}
+				}
 			}
 		}
+
+		return true;
+	}
+
+	public void checkWin() {
+		if (isWinner()) {
+			gameOver = true;
+			setMessage("You won! Final score: " + score);
+			showDialog("You've won! congrats!");
+		}
+	}
+
+	public boolean isWinner() {
+		Grid<Actor> grid = getGrid();
+		ArrayList<Location> locs = grid.getOccupiedLocations();
+
+		for (Location loc : locs) {
+			Tile tile = (Tile) grid.get(loc);
+			if (tile.getValue() == 2048) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

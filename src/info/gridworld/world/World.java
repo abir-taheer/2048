@@ -64,6 +64,10 @@ public class World<T> {
 		} else frame.repaint();
 	}
 
+	public void showDialog(String message) {
+		JOptionPane.showMessageDialog(frame, message);
+	}
+
 	/**
 	 * Gets the grid managed by this world.
 	 *
