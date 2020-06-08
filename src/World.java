@@ -2,10 +2,9 @@ import info.gridworld.actor.Actor;
 import info.gridworld.actor.ActorWorld;
 import info.gridworld.grid.Grid;
 import info.gridworld.grid.Location;
+import java.util.ArrayList;
 import tiles.Tile;
 import tiles.Tile2;
-
-import java.util.ArrayList;
 
 public class World extends ActorWorld {
 	boolean winOrLose = false;
@@ -23,7 +22,6 @@ public class World extends ActorWorld {
 		ArrayList locations = grid.getOccupiedLocations();
 
 		for (int i = 0; i < locations.size(); i++) {
-
 			Location loc = (Location) locations.get(i);
 
 			Tile tile = (Tile) grid.get(loc);
@@ -41,7 +39,6 @@ public class World extends ActorWorld {
 		}
 		if (direction.equals("UP")) {
 			dir = Location.NORTH;
-
 		}
 		if (direction.equals("RIGHT")) {
 			dir = Location.EAST;
@@ -49,7 +46,12 @@ public class World extends ActorWorld {
 		if (direction.equals("LEFT")) {
 			dir = Location.WEST;
 		}
-		if (direction.equals("DOWN") || direction.equals("UP") || direction.equals("LEFT") || direction.equals("RIGHT")) {
+		if (
+			direction.equals("DOWN") ||
+			direction.equals("UP") ||
+			direction.equals("LEFT") ||
+			direction.equals("RIGHT")
+		) {
 			shiftValues(dir);
 
 			refreshTiles();
@@ -78,9 +80,9 @@ public class World extends ActorWorld {
 
 			for (int inner = 0; inner < 4; inner++) {
 				int actualInner = isReversed ? 3 - inner : inner;
-				Location loc = isVertical ?
-						new Location(actualInner, actualOuter) :
-						new Location(actualOuter, actualInner);
+				Location loc = isVertical
+					? new Location(actualInner, actualOuter)
+					: new Location(actualOuter, actualInner);
 
 				boolean canExit = false;
 
@@ -93,8 +95,9 @@ public class World extends ActorWorld {
 						next.removeSelfFromGrid();
 						cur.moveTo(adj);
 						next.putSelfInGrid(grid, loc);
-
-					} else if (!next.willChange() && next.getValue() == cur.getValue()) {
+					} else if (
+						!next.willChange() && next.getValue() == cur.getValue()
+					) {
 						next.setValue(next.getValue() + cur.getValue());
 						cur.setValue(0);
 					} else {
@@ -104,7 +107,6 @@ public class World extends ActorWorld {
 					adj = adj.getAdjacentLocation(dir);
 				}
 			}
-
 		}
 	}
 
@@ -138,14 +140,20 @@ public class World extends ActorWorld {
 				if (j != 3) {
 					Location loc = new Location(j, i);
 					Location loc2 = loc.getAdjacentLocation(Location.SOUTH);
-					if (((Tile) grid.get(loc)).getValue() != ((Tile) grid.get(loc2)).getValue()) {
+					if (
+						((Tile) grid.get(loc)).getValue() !=
+						((Tile) grid.get(loc2)).getValue()
+					) {
 						counter++;
 					}
 				}
 				if (i != 3) {
 					Location loc = new Location(j, i);
 					Location loc2 = loc.getAdjacentLocation(Location.EAST);
-					if (((Tile) grid.get(loc)).getValue() != ((Tile) grid.get(loc2)).getValue()) {
+					if (
+						((Tile) grid.get(loc)).getValue() !=
+						((Tile) grid.get(loc2)).getValue()
+					) {
 						counter++;
 					}
 				}
@@ -168,5 +176,4 @@ public class World extends ActorWorld {
 			}
 		}
 	}
-
 }

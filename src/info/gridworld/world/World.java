@@ -20,12 +20,11 @@ import info.gridworld.grid.BoundedGrid;
 import info.gridworld.grid.Grid;
 import info.gridworld.grid.Location;
 import info.gridworld.gui.WorldFrame;
-
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.swing.*;
 
 /**
  * A <code>World</code> is the mediator between a grid and the GridWorld GUI.
@@ -41,7 +40,6 @@ public class World<T> {
 	private final Set<String> gridClassNames;
 	private String message;
 	private JFrame frame;
-
 
 	public World() {
 		this(new BoundedGrid<T>(DEFAULT_ROWS, DEFAULT_COLS));
@@ -63,8 +61,7 @@ public class World<T> {
 		if (frame == null) {
 			frame = new WorldFrame<T>(this);
 			frame.setVisible(true);
-		} else
-			frame.repaint();
+		} else frame.repaint();
 	}
 
 	/**
@@ -150,38 +147,29 @@ public class World<T> {
 		int rows = gr.getNumRows();
 		int cols = gr.getNumCols();
 
-		if (rows > 0 && cols > 0) // bounded grid
-		{
+		if (rows > 0 && cols > 0) { // bounded grid
 			// get all valid empty locations and pick one at random
 			ArrayList<Location> emptyLocs = new ArrayList<Location>();
-			for (int i = 0; i < rows; i++)
-				for (int j = 0; j < cols; j++) {
-					Location loc = new Location(i, j);
-					if (gr.isValid(loc) && gr.get(loc) == null)
-						emptyLocs.add(loc);
-				}
-			if (emptyLocs.size() == 0)
-				return null;
+			for (int i = 0; i < rows; i++) for (int j = 0; j < cols; j++) {
+				Location loc = new Location(i, j);
+				if (gr.isValid(loc) && gr.get(loc) == null) emptyLocs.add(loc);
+			}
+			if (emptyLocs.size() == 0) return null;
 			int r = generator.nextInt(emptyLocs.size());
 			return emptyLocs.get(r);
-		} else
-		// unbounded grid
-		{
+		} else { // unbounded grid
 			while (true) {
 				// keep generating a random location until an empty one is found
 				int r;
-				if (rows < 0)
-					r = (int) (DEFAULT_ROWS * generator.nextGaussian());
-				else
-					r = generator.nextInt(rows);
+				if (rows < 0) r =
+					(int) (DEFAULT_ROWS * generator.nextGaussian()); else r =
+					generator.nextInt(rows);
 				int c;
-				if (cols < 0)
-					c = (int) (DEFAULT_COLS * generator.nextGaussian());
-				else
-					c = generator.nextInt(cols);
+				if (cols < 0) c =
+					(int) (DEFAULT_COLS * generator.nextGaussian()); else c =
+					generator.nextInt(cols);
 				Location loc = new Location(r, c);
-				if (gr.isValid(loc) && gr.get(loc) == null)
-					return loc;
+				if (gr.isValid(loc) && gr.get(loc) == null) return loc;
 			}
 		}
 	}
@@ -248,8 +236,7 @@ public class World<T> {
 	}
 
 	private void repaint() {
-		if (frame != null)
-			frame.repaint();
+		if (frame != null) frame.repaint();
 	}
 
 	/**
@@ -263,29 +250,22 @@ public class World<T> {
 		int rmax = gr.getNumRows() - 1;
 		int cmin = 0;
 		int cmax = gr.getNumCols() - 1;
-		if (rmax < 0 || cmax < 0) // unbounded grid
-		{
+		if (rmax < 0 || cmax < 0) { // unbounded grid
 			for (Location loc : gr.getOccupiedLocations()) {
 				int r = loc.getRow();
 				int c = loc.getCol();
-				if (r < rmin)
-					rmin = r;
-				if (r > rmax)
-					rmax = r;
-				if (c < cmin)
-					cmin = c;
-				if (c > cmax)
-					cmax = c;
+				if (r < rmin) rmin = r;
+				if (r > rmax) rmax = r;
+				if (c < cmin) cmin = c;
+				if (c > cmax) cmax = c;
 			}
 		}
 
 		for (int i = rmin; i <= rmax; i++) {
 			for (int j = cmin; j < cmax; j++) {
 				Object obj = gr.get(new Location(i, j));
-				if (obj == null)
-					s += " ";
-				else
-					s += obj.toString().substring(0, 1);
+				if (obj == null) s += " "; else s +=
+					obj.toString().substring(0, 1);
 			}
 			s += "\n";
 		}

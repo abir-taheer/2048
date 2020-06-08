@@ -6,7 +6,6 @@ public class Tile extends Actor {
 	protected int originalValue = 0;
 	protected int value;
 
-
 	public Tile() {
 		super();
 	}

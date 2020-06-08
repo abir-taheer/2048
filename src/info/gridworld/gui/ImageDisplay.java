@@ -18,7 +18,6 @@
 
 package info.gridworld.gui;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.RGBImageFilter;
@@ -27,6 +26,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import javax.imageio.ImageIO;
 
 /**
  * An ImageDisplay displays an object as a tinted image from an image file whose
@@ -52,12 +52,13 @@ public class ImageDisplay extends AbstractDisplay {
 		this.cl = cl;
 
 		imageFilename = cl.getName().replace('.', '/');
-		URL url = cl.getClassLoader().getResource(
-				imageFilename + imageExtension);
+		URL url = cl
+			.getClassLoader()
+			.getResource(imageFilename + imageExtension);
 
-		if (url == null)
-			throw new FileNotFoundException(imageFilename + imageExtension
-					+ " not found.");
+		if (url == null) throw new FileNotFoundException(
+			imageFilename + imageExtension + " not found."
+		);
 		tintedVersions.put("", ImageIO.read(url));
 	}
 
@@ -71,37 +72,38 @@ public class ImageDisplay extends AbstractDisplay {
 	 */
 	public void draw(Object obj, Component comp, Graphics2D g2) {
 		Color color;
-		if (obj == null)
-			color = null;
-		else
-			color = (Color) getProperty(obj, "color");
+		if (obj == null) color = null; else color =
+			(Color) getProperty(obj, "color");
 		String imageSuffix = (String) getProperty(obj, "imageSuffix");
-		if (imageSuffix == null)
-			imageSuffix = "";
+		if (imageSuffix == null) imageSuffix = "";
 		// Compose image with color using an image filter.
 		Image tinted = tintedVersions.get(color + imageSuffix);
-		if (tinted == null) // not cached, need new filter for color
-		{
+		if (tinted == null) { // not cached, need new filter for color
 			Image untinted = tintedVersions.get(imageSuffix);
-			if (untinted == null) // not cached, need to fetch
-			{
+			if (untinted == null) { // not cached, need to fetch
 				try {
-					URL url = cl.getClassLoader().getResource(
-							imageFilename + imageSuffix + imageExtension);
-					if (url == null)
-						throw new FileNotFoundException(imageFilename
-								+ imageSuffix + imageExtension + " not found.");
+					URL url = cl
+						.getClassLoader()
+						.getResource(
+							imageFilename + imageSuffix + imageExtension
+						);
+					if (url == null) throw new FileNotFoundException(
+						imageFilename +
+						imageSuffix +
+						imageExtension +
+						" not found."
+					);
 					untinted = ImageIO.read(url);
 					tintedVersions.put(imageSuffix, untinted);
 				} catch (IOException ex) {
 					untinted = tintedVersions.get("");
 				}
 			}
-			if (color == null)
-				tinted = untinted;
-			else {
-				FilteredImageSource src = new FilteredImageSource(untinted
-						.getSource(), new TintFilter(color));
+			if (color == null) tinted = untinted; else {
+				FilteredImageSource src = new FilteredImageSource(
+					untinted.getSource(),
+					new TintFilter(color)
+				);
 				tinted = comp.createImage(src);
 				// Cache tinted image in map by color, we're likely to need it
 				// again.

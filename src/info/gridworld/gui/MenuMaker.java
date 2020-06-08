@@ -18,10 +18,6 @@ package info.gridworld.gui;
 
 import info.gridworld.grid.Grid;
 import info.gridworld.grid.Location;
-
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,6 +30,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  * Makes the menus for constructing new occupants and grids, and for invoking
@@ -57,8 +56,11 @@ public class MenuMaker<T> {
 	 * @param resources  the resource bundle
 	 * @param displayMap the display map
 	 */
-	public MenuMaker(WorldFrame<T> parent, ResourceBundle resources,
-					 DisplayMap displayMap) {
+	public MenuMaker(
+		WorldFrame<T> parent,
+		ResourceBundle resources,
+		DisplayMap displayMap
+	) {
 		this.parent = parent;
 		this.resources = resources;
 		this.displayMap = displayMap;
@@ -80,8 +82,7 @@ public class MenuMaker<T> {
 		for (int i = 0; i < methods.length; i++) {
 			Class dcl = methods[i].getDeclaringClass();
 			if (dcl != Object.class) {
-				if (i > 0 && dcl != oldDcl)
-					menu.addSeparator();
+				if (i > 0 && dcl != oldDcl) menu.addSeparator();
 				menu.add(new MethodItem(methods[i]));
 			}
 			oldDcl = dcl;
@@ -97,17 +98,16 @@ public class MenuMaker<T> {
 	 * @param loc     the location of the occupant to be constructed
 	 * @return the menu to pop up
 	 */
-	public JPopupMenu makeConstructorMenu(Collection<Class> classes,
-										  Location loc) {
+	public JPopupMenu makeConstructorMenu(
+		Collection<Class> classes,
+		Location loc
+	) {
 		this.currentLocation = loc;
 		JPopupMenu menu = new JPopupMenu();
 		boolean first = true;
 		Iterator<Class> iter = classes.iterator();
 		while (iter.hasNext()) {
-			if (first)
-				first = false;
-			else
-				menu.addSeparator();
+			if (first) first = false; else menu.addSeparator();
 			Class cl = iter.next();
 			Constructor[] cons = cl.getConstructors();
 			for (int i = 0; i < cons.length; i++) {
@@ -128,10 +128,7 @@ public class MenuMaker<T> {
 		boolean first = true;
 		Iterator<Class> iter = classes.iterator();
 		while (iter.hasNext()) {
-			if (first)
-				first = false;
-			else
-				menu.addSeparator();
+			if (first) first = false; else menu.addSeparator();
 			Class cl = iter.next();
 			Constructor[] cons = cl.getConstructors();
 			for (int i = 0; i < cons.length; i++) {
@@ -144,27 +141,28 @@ public class MenuMaker<T> {
 		Class cl = occupant.getClass();
 		Method[] methods = cl.getMethods();
 
-		Arrays.sort(methods, new Comparator<Method>() {
-			public int compare(Method m1, Method m2) {
-				int d1 = depth(m1.getDeclaringClass());
-				int d2 = depth(m2.getDeclaringClass());
-				if (d1 != d2)
-					return d2 - d1;
-				int d = m1.getName().compareTo(m2.getName());
-				if (d != 0)
-					return d;
-				d1 = m1.getParameterTypes().length;
-				d2 = m2.getParameterTypes().length;
-				return d1 - d2;
-			}
+		Arrays.sort(
+			methods,
+			new Comparator<Method>() {
 
-			private int depth(Class cl) {
-				if (cl == null)
-					return 0;
-				else
-					return 1 + depth(cl.getSuperclass());
+				public int compare(Method m1, Method m2) {
+					int d1 = depth(m1.getDeclaringClass());
+					int d2 = depth(m2.getDeclaringClass());
+					if (d1 != d2) return d2 - d1;
+					int d = m1.getName().compareTo(m2.getName());
+					if (d != 0) return d;
+					d1 = m1.getParameterTypes().length;
+					d2 = m2.getParameterTypes().length;
+					return d1 - d2;
+				}
+
+				private int depth(Class cl) {
+					if (cl == null) return 0; else return (
+						1 + depth(cl.getSuperclass())
+					);
+				}
 			}
-		});
+		);
 		return methods;
 	}
 
@@ -172,18 +170,20 @@ public class MenuMaker<T> {
 	 * A menu item that shows a method or constructor.
 	 */
 	private class MCItem extends JMenuItem {
-		public String getDisplayString(Class retType, String name,
-									   Class[] paramTypes) {
+
+		public String getDisplayString(
+			Class retType,
+			String name,
+			Class[] paramTypes
+		) {
 			StringBuffer b = new StringBuffer();
 			b.append("<html>");
-			if (retType != null)
-				appendTypeName(b, retType.getName());
+			if (retType != null) appendTypeName(b, retType.getName());
 			b.append(" <font color='blue'>");
 			appendTypeName(b, name);
 			b.append("</font>( ");
 			for (int i = 0; i < paramTypes.length; i++) {
-				if (i > 0)
-					b.append(", ");
+				if (i > 0) b.append(", ");
 				appendTypeName(b, paramTypes[i].getName());
 			}
 			b.append(" )</html>");
@@ -200,26 +200,23 @@ public class MenuMaker<T> {
 					b.append("</font>");
 				}
 				b.append(name.substring(i + 1));
-			} else
-				b.append(name);
+			} else b.append(name);
 		}
 
 		public Object makeDefaultValue(Class type) {
-			if (type == int.class)
-				return new Integer(0);
-			else if (type == boolean.class)
-				return Boolean.FALSE;
-			else if (type == double.class)
-				return new Double(0);
-			else if (type == String.class)
-				return "";
-			else if (type == Color.class)
-				return Color.BLACK;
-			else if (type == Location.class)
-				return currentLocation;
-			else if (Grid.class.isAssignableFrom(type))
-				return currentGrid;
-			else {
+			if (type == int.class) return new Integer(0); else if (
+				type == boolean.class
+			) return Boolean.FALSE; else if (
+				type == double.class
+			) return new Double(0); else if (
+				type == String.class
+			) return ""; else if (
+				type == Color.class
+			) return Color.BLACK; else if (
+				type == Location.class
+			) return currentLocation; else if (
+				Grid.class.isAssignableFrom(type)
+			) return currentGrid; else {
 				try {
 					return type.newInstance();
 				} catch (Exception ex) {
@@ -233,8 +230,13 @@ public class MenuMaker<T> {
 		private final Constructor c;
 
 		public ConstructorItem(Constructor c) {
-			setText(getDisplayString(null, c.getDeclaringClass().getName(), c
-					.getParameterTypes()));
+			setText(
+				getDisplayString(
+					null,
+					c.getDeclaringClass().getName(),
+					c.getParameterTypes()
+				)
+			);
 			this.c = c;
 		}
 
@@ -248,9 +250,12 @@ public class MenuMaker<T> {
 
 			if (types.length > 0) {
 				PropertySheet sheet = new PropertySheet(types, values);
-				JOptionPane.showMessageDialog(this, sheet, resources
-								.getString("dialog.method.params"),
-						JOptionPane.QUESTION_MESSAGE);
+				JOptionPane.showMessageDialog(
+					this,
+					sheet,
+					resources.getString("dialog.method.params"),
+					JOptionPane.QUESTION_MESSAGE
+				);
 				values = sheet.getValues();
 			}
 
@@ -266,8 +271,10 @@ public class MenuMaker<T> {
 		}
 	}
 
-	private class OccupantConstructorItem extends ConstructorItem implements
-			ActionListener {
+	private class OccupantConstructorItem
+		extends ConstructorItem
+		implements ActionListener {
+
 		public OccupantConstructorItem(Constructor c) {
 			super(c);
 			addActionListener(this);
@@ -282,8 +289,10 @@ public class MenuMaker<T> {
 		}
 	}
 
-	private class GridConstructorItem extends ConstructorItem implements
-			ActionListener {
+	private class GridConstructorItem
+		extends ConstructorItem
+		implements ActionListener {
+
 		public GridConstructorItem(Constructor c) {
 			super(c);
 			addActionListener(this);
@@ -301,8 +310,13 @@ public class MenuMaker<T> {
 		private final Method m;
 
 		public MethodItem(Method m) {
-			setText(getDisplayString(m.getReturnType(), m.getName(), m
-					.getParameterTypes()));
+			setText(
+				getDisplayString(
+					m.getReturnType(),
+					m.getName(),
+					m.getParameterTypes()
+				)
+			);
 			this.m = m;
 			addActionListener(this);
 			setIcon(displayMap.getIcon(m.getDeclaringClass(), 16, 16));
@@ -318,9 +332,12 @@ public class MenuMaker<T> {
 
 			if (types.length > 0) {
 				PropertySheet sheet = new PropertySheet(types, values);
-				JOptionPane.showMessageDialog(this, sheet, resources
-								.getString("dialog.method.params"),
-						JOptionPane.QUESTION_MESSAGE);
+				JOptionPane.showMessageDialog(
+					this,
+					sheet,
+					resources.getString("dialog.method.params"),
+					JOptionPane.QUESTION_MESSAGE
+				);
 				values = sheet.getValues();
 			}
 
@@ -332,19 +349,23 @@ public class MenuMaker<T> {
 					Object resultObject;
 					final int MAX_LENGTH = 50;
 					final int MAX_HEIGHT = 10;
-					if (resultString.length() < MAX_LENGTH)
-						resultObject = resultString;
-					else {
-						int rows = Math.min(MAX_HEIGHT, 1
-								+ resultString.length() / MAX_LENGTH);
+					if (resultString.length() < MAX_LENGTH) resultObject =
+						resultString; else {
+						int rows = Math.min(
+							MAX_HEIGHT,
+							1 + resultString.length() / MAX_LENGTH
+						);
 						JTextArea pane = new JTextArea(rows, MAX_LENGTH);
 						pane.setText(resultString);
 						pane.setLineWrap(true);
 						resultObject = new JScrollPane(pane);
 					}
-					JOptionPane.showMessageDialog(parent, resultObject,
-							resources.getString("dialog.method.return"),
-							JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(
+						parent,
+						resultObject,
+						resources.getString("dialog.method.return"),
+						JOptionPane.INFORMATION_MESSAGE
+					);
 				}
 			} catch (InvocationTargetException ex) {
 				parent.new GUIExceptionHandler().handle(ex.getCause());
@@ -389,8 +410,7 @@ class PropertySheet extends JPanel {
 				if (editors[i] != null) {
 					editors[i].setValue(values[i]);
 					add(getEditorComponent(editors[i]));
-				} else
-					add(new JLabel("?"));
+				} else add(new JLabel("?"));
 			}
 		}
 	}
@@ -407,8 +427,7 @@ class PropertySheet extends JPanel {
 	public PropertyEditor getEditor(Class type) {
 		PropertyEditor editor;
 		editor = defaultEditors.get(type);
-		if (editor != null)
-			return editor;
+		if (editor != null) return editor;
 		editor = PropertyEditorManager.findEditor(type);
 		return editor;
 	}
@@ -429,46 +448,53 @@ class PropertySheet extends JPanel {
 			// make a combo box that shows all tags
 			final JComboBox comboBox = new JComboBox(tags);
 			comboBox.setSelectedItem(text);
-			comboBox.addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent event) {
-					if (event.getStateChange() == ItemEvent.SELECTED)
-						editor.setAsText((String) comboBox.getSelectedItem());
+			comboBox.addItemListener(
+				new ItemListener() {
+
+					public void itemStateChanged(ItemEvent event) {
+						if (
+							event.getStateChange() == ItemEvent.SELECTED
+						) editor.setAsText((String) comboBox.getSelectedItem());
+					}
 				}
-			});
+			);
 			return comboBox;
 		} else {
 			final JTextField textField = new JTextField(text, 10);
-			textField.getDocument().addDocumentListener(new DocumentListener() {
-				public void insertUpdate(DocumentEvent e) {
-					try {
-						editor.setAsText(textField.getText());
-					} catch (IllegalArgumentException exception) {
-					}
-				}
+			textField
+				.getDocument()
+				.addDocumentListener(
+					new DocumentListener() {
 
-				public void removeUpdate(DocumentEvent e) {
-					try {
-						editor.setAsText(textField.getText());
-					} catch (IllegalArgumentException exception) {
-					}
-				}
+						public void insertUpdate(DocumentEvent e) {
+							try {
+								editor.setAsText(textField.getText());
+							} catch (IllegalArgumentException exception) {}
+						}
 
-				public void changedUpdate(DocumentEvent e) {
-				}
-			});
+						public void removeUpdate(DocumentEvent e) {
+							try {
+								editor.setAsText(textField.getText());
+							} catch (IllegalArgumentException exception) {}
+						}
+
+						public void changedUpdate(DocumentEvent e) {}
+					}
+				);
 			return textField;
 		}
 	}
 
 	public Object[] getValues() {
-		for (int i = 0; i < editors.length; i++)
-			if (editors[i] != null)
-				values[i] = editors[i].getValue();
+		for (int i = 0; i < editors.length; i++) if (
+			editors[i] != null
+		) values[i] = editors[i].getValue();
 		return values;
 	}
 
 	// workaround for Web Start bug
 	public static class StringEditor extends PropertyEditorSupport {
+
 		public String getAsText() {
 			return (String) getValue();
 		}

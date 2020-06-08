@@ -128,30 +128,29 @@ public class Location implements Comparable {
 	public Location getAdjacentLocation(int direction) {
 		// reduce mod 360 and round to closest multiple of 45
 		int adjustedDirection = (direction + HALF_RIGHT / 2) % FULL_CIRCLE;
-		if (adjustedDirection < 0)
-			adjustedDirection += FULL_CIRCLE;
+		if (adjustedDirection < 0) adjustedDirection += FULL_CIRCLE;
 
 		adjustedDirection = (adjustedDirection / HALF_RIGHT) * HALF_RIGHT;
 		int dc = 0;
 		int dr = 0;
-		if (adjustedDirection == EAST)
-			dc = 1;
-		else if (adjustedDirection == SOUTHEAST) {
+		if (adjustedDirection == EAST) dc = 1; else if (
+			adjustedDirection == SOUTHEAST
+		) {
 			dc = 1;
 			dr = 1;
-		} else if (adjustedDirection == SOUTH)
-			dr = 1;
-		else if (adjustedDirection == SOUTHWEST) {
+		} else if (adjustedDirection == SOUTH) dr = 1; else if (
+			adjustedDirection == SOUTHWEST
+		) {
 			dc = -1;
 			dr = 1;
-		} else if (adjustedDirection == WEST)
-			dc = -1;
-		else if (adjustedDirection == NORTHWEST) {
+		} else if (adjustedDirection == WEST) dc = -1; else if (
+			adjustedDirection == NORTHWEST
+		) {
 			dc = -1;
 			dr = -1;
-		} else if (adjustedDirection == NORTH)
-			dr = -1;
-		else if (adjustedDirection == NORTHEAST) {
+		} else if (adjustedDirection == NORTH) dr = -1; else if (
+			adjustedDirection == NORTHEAST
+		) {
 			dc = 1;
 			dr = -1;
 		}
@@ -178,8 +177,7 @@ public class Location implements Comparable {
 		// prepare for truncating division by 45 degrees
 		compassAngle += HALF_RIGHT / 2;
 		// wrap negative angles
-		if (compassAngle < 0)
-			compassAngle += FULL_CIRCLE;
+		if (compassAngle < 0) compassAngle += FULL_CIRCLE;
 		// round to nearest multiple of 45
 		return (compassAngle / HALF_RIGHT) * HALF_RIGHT;
 	}
@@ -194,8 +192,7 @@ public class Location implements Comparable {
 	 * <code>false</code> otherwise
 	 */
 	public boolean equals(Object other) {
-		if (!(other instanceof Location))
-			return false;
+		if (!(other instanceof Location)) return false;
 
 		Location otherLoc = (Location) other;
 		return getRow() == otherLoc.getRow() && getCol() == otherLoc.getCol();
@@ -224,14 +221,10 @@ public class Location implements Comparable {
 	 */
 	public int compareTo(Object other) {
 		Location otherLoc = (Location) other;
-		if (getRow() < otherLoc.getRow())
-			return -1;
-		if (getRow() > otherLoc.getRow())
-			return 1;
-		if (getCol() < otherLoc.getCol())
-			return -1;
-		if (getCol() > otherLoc.getCol())
-			return 1;
+		if (getRow() < otherLoc.getRow()) return -1;
+		if (getRow() > otherLoc.getRow()) return 1;
+		if (getCol() < otherLoc.getCol()) return -1;
+		if (getCol() > otherLoc.getCol()) return 1;
 		return 0;
 	}
 

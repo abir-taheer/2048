@@ -20,8 +20,6 @@ package info.gridworld.gui;
 
 import info.gridworld.grid.Grid;
 import info.gridworld.grid.Location;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,6 +30,7 @@ import java.awt.geom.Rectangle2D;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import javax.swing.*;
 
 /**
  * A <code>GridPanel</code> is a panel containing a graphical display of the
@@ -41,8 +40,9 @@ import java.util.ResourceBundle;
  * students.
  */
 
-public class GridPanel extends JPanel implements Scrollable,
-		PseudoInfiniteViewport.Pannable {
+public class GridPanel
+	extends JPanel
+	implements Scrollable, PseudoInfiniteViewport.Pannable {
 	private static final int MIN_CELL_SIZE = 12;
 	private static final int DEFAULT_CELL_SIZE = 48;
 	private static final int DEFAULT_CELL_COUNT = 10;
@@ -79,13 +79,16 @@ public class GridPanel extends JPanel implements Scrollable,
 		Graphics2D g2 = (Graphics2D) g;
 
 		super.paintComponent(g2);
-		if (grid == null)
-			return;
+		if (grid == null) return;
 
 		Insets insets = getInsets();
 		g2.setColor(backgroundColor);
-		g2.fillRect(insets.left, insets.top, numCols * (cellSize + 1) + 1, numRows
-				* (cellSize + 1) + 1);
+		g2.fillRect(
+			insets.left,
+			insets.top,
+			numCols * (cellSize + 1) + 1,
+			numRows * (cellSize + 1) + 1
+		);
 
 		drawWatermark(g2);
 		drawGridlines(g2);
@@ -131,32 +134,60 @@ public class GridPanel extends JPanel implements Scrollable,
 		Rectangle curClip = g2.getClip().getBounds();
 		int top = getInsets().top, left = getInsets().left;
 
-		int miny = Math.max(0, (curClip.y - top) / (cellSize + 1)) * (cellSize + 1) + top;
-		int minx = Math.max(0, (curClip.x - left) / (cellSize + 1)) * (cellSize + 1) + left;
-		int maxy = Math.min(numRows,
-				(curClip.y + curClip.height - top + cellSize) / (cellSize + 1))
-				* (cellSize + 1) + top;
-		int maxx = Math.min(numCols,
-				(curClip.x + curClip.width - left + cellSize) / (cellSize + 1))
-				* (cellSize + 1) + left;
+		int miny =
+			Math.max(0, (curClip.y - top) / (cellSize + 1)) *
+			(cellSize + 1) +
+			top;
+		int minx =
+			Math.max(0, (curClip.x - left) / (cellSize + 1)) *
+			(cellSize + 1) +
+			left;
+		int maxy =
+			Math.min(
+				numRows,
+				(curClip.y + curClip.height - top + cellSize) / (cellSize + 1)
+			) *
+			(cellSize + 1) +
+			top;
+		int maxx =
+			Math.min(
+				numCols,
+				(curClip.x + curClip.width - left + cellSize) / (cellSize + 1)
+			) *
+			(cellSize + 1) +
+			left;
 
 		g2.setColor(Color.GRAY);
-		for (int y = miny; y <= maxy; y += cellSize + 1)
-			for (int x = minx; x <= maxx; x += cellSize + 1) {
-				Location loc = locationForPoint(
-						new Point(x + cellSize / 2, y + cellSize / 2));
-				if (loc != null && !grid.isValid(loc))
-					g2.fillRect(x + 1, y + 1, cellSize, cellSize);
-			}
+		for (int y = miny; y <= maxy; y += cellSize + 1) for (
+			int x = minx;
+			x <= maxx;
+			x += cellSize + 1
+		) {
+			Location loc = locationForPoint(
+				new Point(x + cellSize / 2, y + cellSize / 2)
+			);
+			if (loc != null && !grid.isValid(loc)) g2.fillRect(
+				x + 1,
+				y + 1,
+				cellSize,
+				cellSize
+			);
+		}
 
 		g2.setColor(Color.BLACK);
-		for (int y = miny; y <= maxy; y += cellSize + 1)
-			// draw horizontal lines
-			g2.drawLine(minx, y, maxx, y);
+		for (int y = miny; y <= maxy; y += cellSize + 1) g2.drawLine(
+			minx,
+			y,
+			maxx,
+			y
+		); // draw horizontal lines
 
-		for (int x = minx; x <= maxx; x += cellSize + 1)
-			// draw vertical lines
-			g2.drawLine(x, miny, x, maxy);
+		for (int x = minx; x <= maxx; x += cellSize + 1) g2.drawLine(
+			x,
+			miny,
+			x,
+			maxy
+		); // draw vertical lines
 	}
 
 	/**
@@ -181,12 +212,17 @@ public class GridPanel extends JPanel implements Scrollable,
 	 * @param g2 the graphics context
 	 */
 	private void drawCurrentLocation(Graphics2D g2) {
-		if ("hide".equals(System.getProperty("info.gridworld.gui.selection")))
-			return;
+		if (
+			"hide".equals(System.getProperty("info.gridworld.gui.selection"))
+		) return;
 		if (currentLocation != null) {
 			Point p = pointForLocation(currentLocation);
-			g2.drawRect(p.x - cellSize / 2 - 2, p.y - cellSize / 2 - 2,
-					cellSize + 3, cellSize + 3);
+			g2.drawRect(
+				p.x - cellSize / 2 - 2,
+				p.y - cellSize / 2 - 2,
+				cellSize + 3,
+				cellSize + 3
+			);
 		}
 	}
 
@@ -196,11 +232,14 @@ public class GridPanel extends JPanel implements Scrollable,
 	 * @param g2 the graphics context
 	 */
 	private void drawWatermark(Graphics2D g2) {
-		if ("hide".equals(System.getProperty("info.gridworld.gui.watermark")))
-			return;
+		if (
+			"hide".equals(System.getProperty("info.gridworld.gui.watermark"))
+		) return;
 		g2 = (Graphics2D) g2.create();
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setRenderingHint(
+			RenderingHints.KEY_ANTIALIASING,
+			RenderingHints.VALUE_ANTIALIAS_ON
+		);
 		Rectangle rect = getBounds();
 		g2.setPaint(new Color(0xE3, 0xD3, 0xD3));
 		final int WATERMARK_FONT_SIZE = 100;
@@ -224,12 +263,14 @@ public class GridPanel extends JPanel implements Scrollable,
 	 * @param flag true/false to enable/disable tool tips
 	 */
 	public void setToolTipsEnabled(boolean flag) {
-		if ("hide".equals(System.getProperty("info.gridworld.gui.tooltips")))
-			flag = false;
-		if (flag)
-			ToolTipManager.sharedInstance().registerComponent(this);
-		else
-			ToolTipManager.sharedInstance().unregisterComponent(this);
+		if (
+			"hide".equals(System.getProperty("info.gridworld.gui.tooltips"))
+		) flag = false;
+		if (flag) ToolTipManager
+			.sharedInstance()
+			.registerComponent(this); else ToolTipManager
+			.sharedInstance()
+			.unregisterComponent(this);
 		toolTipsEnabled = flag;
 	}
 
@@ -244,8 +285,7 @@ public class GridPanel extends JPanel implements Scrollable,
 		currentLocation = new Location(0, 0);
 		JViewport vp = getEnclosingViewport(); // before changing, reset
 		// scroll/pan position
-		if (vp != null)
-			vp.setViewPosition(new Point(0, 0));
+		if (vp != null) vp.setViewPosition(new Point(0, 0));
 
 		grid = gr;
 		originRow = originCol = 0;
@@ -275,8 +315,10 @@ public class GridPanel extends JPanel implements Scrollable,
 	 * @return preferred size
 	 */
 	public Dimension getPreferredSize() {
-		return new Dimension(numCols * (cellSize + 1) + 1 + extraWidth(),
-				numRows * (cellSize + 1) + 1 + extraHeight());
+		return new Dimension(
+			numCols * (cellSize + 1) + 1 + extraWidth(),
+			numRows * (cellSize + 1) + 1 + extraHeight()
+		);
 	}
 
 	/**
@@ -285,8 +327,10 @@ public class GridPanel extends JPanel implements Scrollable,
 	 * @return minimum size
 	 */
 	public Dimension getMinimumSize() {
-		return new Dimension(numCols * (MIN_CELL_SIZE + 1) + 1 + extraWidth(),
-				numRows * (MIN_CELL_SIZE + 1) + 1 + extraHeight());
+		return new Dimension(
+			numCols * (MIN_CELL_SIZE + 1) + 1 + extraWidth(),
+			numRows * (MIN_CELL_SIZE + 1) + 1 + extraHeight()
+		);
 	}
 
 	/**
@@ -315,11 +359,10 @@ public class GridPanel extends JPanel implements Scrollable,
 		repaint();
 		JViewport vp = getEnclosingViewport();
 		if (vp != null) {
-			if (!isPannableUnbounded()
-					|| !(vp instanceof PseudoInfiniteViewport))
-				vp.setViewPosition(pointForLocation(loc));
-			else
-				showPanTip();
+			if (
+				!isPannableUnbounded() ||
+				!(vp instanceof PseudoInfiniteViewport)
+			) vp.setViewPosition(pointForLocation(loc)); else showPanTip();
 		}
 	}
 
@@ -337,8 +380,10 @@ public class GridPanel extends JPanel implements Scrollable,
 	}
 
 	public Point pointForLocation(Location loc) {
-		return new Point(colToXCoord(loc.getCol()) + cellSize / 2,
-				rowToYCoord(loc.getRow()) + cellSize / 2);
+		return new Point(
+			colToXCoord(loc.getCol()) + cellSize / 2,
+			rowToYCoord(loc.getRow()) + cellSize / 2
+		);
 	}
 
 	// private helpers to convert between (x,y) and (row,col)
@@ -374,15 +419,17 @@ public class GridPanel extends JPanel implements Scrollable,
 	}
 
 	private String getToolTipText(Location loc) {
-		if (!toolTipsEnabled || loc == null || !grid.isValid(loc))
-			return null;
+		if (!toolTipsEnabled || loc == null || !grid.isValid(loc)) return null;
 		Object f = grid.get(loc);
-		if (f != null)
-			return MessageFormat.format(resources
-					.getString("cell.tooltip.nonempty"), loc, f);
-		else
-			return MessageFormat.format(resources
-					.getString("cell.tooltip.empty"), loc, f);
+		if (f != null) return MessageFormat.format(
+			resources.getString("cell.tooltip.nonempty"),
+			loc,
+			f
+		); else return MessageFormat.format(
+			resources.getString("cell.tooltip.empty"),
+			loc,
+			f
+		);
 	}
 
 	/**
@@ -410,43 +457,46 @@ public class GridPanel extends JPanel implements Scrollable,
 	 * @param dc the number of columns by which to move the location
 	 */
 	public void moveLocation(int dr, int dc) {
-		Location newLocation = new Location(currentLocation.getRow() + dr,
-				currentLocation.getCol() + dc);
-		if (!grid.isValid(newLocation))
-			return;
+		Location newLocation = new Location(
+			currentLocation.getRow() + dr,
+			currentLocation.getCol() + dc
+		);
+		if (!grid.isValid(newLocation)) return;
 
 		currentLocation = newLocation;
 
 		JViewport viewPort = getEnclosingViewport();
 		if (isPannableUnbounded()) {
-			if (originRow > currentLocation.getRow())
-				originRow = currentLocation.getRow();
-			if (originCol > currentLocation.getCol())
-				originCol = currentLocation.getCol();
+			if (originRow > currentLocation.getRow()) originRow =
+				currentLocation.getRow();
+			if (originCol > currentLocation.getCol()) originCol =
+				currentLocation.getCol();
 			Dimension dim = viewPort.getSize();
 			int rows = dim.height / (cellSize + 1);
 			int cols = dim.width / (cellSize + 1);
-			if (originRow + rows - 1 < currentLocation.getRow())
-				originRow = currentLocation.getRow() - rows + 1;
-			if (originCol + rows - 1 < currentLocation.getCol())
-				originCol = currentLocation.getCol() - cols + 1;
+			if (originRow + rows - 1 < currentLocation.getRow()) originRow =
+				currentLocation.getRow() - rows + 1;
+			if (originCol + rows - 1 < currentLocation.getCol()) originCol =
+				currentLocation.getCol() - cols + 1;
 		} else if (viewPort != null) {
 			int dx = 0;
 			int dy = 0;
 			Point p = pointForLocation(currentLocation);
-			Rectangle locRect = new Rectangle(p.x - cellSize / 2, p.y
-					- cellSize / 2, cellSize + 1, cellSize + 1);
+			Rectangle locRect = new Rectangle(
+				p.x - cellSize / 2,
+				p.y - cellSize / 2,
+				cellSize + 1,
+				cellSize + 1
+			);
 
 			Rectangle viewRect = viewPort.getViewRect();
 			if (!viewRect.contains(locRect)) {
-				while (locRect.x < viewRect.x + dx)
-					dx -= cellSize + 1;
-				while (locRect.y < viewRect.y + dy)
-					dy -= cellSize + 1;
-				while (locRect.getMaxX() > viewRect.getMaxX() + dx)
-					dx += cellSize + 1;
-				while (locRect.getMaxY() > viewRect.getMaxY() + dy)
-					dy += cellSize + 1;
+				while (locRect.x < viewRect.x + dx) dx -= cellSize + 1;
+				while (locRect.y < viewRect.y + dy) dy -= cellSize + 1;
+				while (locRect.getMaxX() > viewRect.getMaxX() + dx) dx +=
+					cellSize + 1;
+				while (locRect.getMaxY() > viewRect.getMaxY() + dy) dy +=
+					cellSize + 1;
 
 				Point pt = viewPort.getViewPosition();
 				pt.x += dx;
@@ -455,8 +505,10 @@ public class GridPanel extends JPanel implements Scrollable,
 			}
 		}
 		repaint();
-		showTip(getToolTipText(currentLocation),
-				pointForLocation(currentLocation));
+		showTip(
+			getToolTipText(currentLocation),
+			pointForLocation(currentLocation)
+		);
 	}
 
 	/**
@@ -466,23 +518,26 @@ public class GridPanel extends JPanel implements Scrollable,
 	 * @param pt      the pixel position over which to show the tip
 	 */
 	public void showTip(String tipText, Point pt) {
-		if (getRootPane() == null)
-			return;
+		if (getRootPane() == null) return;
 		// draw in glass pane to appear on top of other components
 		if (glassPane == null) {
 			getRootPane().setGlassPane(glassPane = new JPanel());
 			glassPane.setOpaque(false);
 			glassPane.setLayout(null); // will control layout manually
 			glassPane.add(tip = new JToolTip());
-			tipTimer = new Timer(TIP_DELAY, new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
-					glassPane.setVisible(false);
-				}
-			});
+			tipTimer =
+				new Timer(
+					TIP_DELAY,
+					new ActionListener() {
+
+						public void actionPerformed(ActionEvent evt) {
+							glassPane.setVisible(false);
+						}
+					}
+				);
 			tipTimer.setRepeats(false);
 		}
-		if (tipText == null)
-			return;
+		if (tipText == null) return;
 
 		// set tip text to identify current origin of pannable view
 		tip.setTipText(tipText);
@@ -511,18 +566,20 @@ public class GridPanel extends JPanel implements Scrollable,
 		} else {
 			JViewport vp = getEnclosingViewport();
 			Dimension viewableSize = (vp != null) ? vp.getSize() : getSize();
-			int desiredCellSize = Math.min(
+			int desiredCellSize =
+				Math.min(
 					(viewableSize.height - extraHeight()) / numRows,
-					(viewableSize.width - extraWidth()) / numCols) - 1;
+					(viewableSize.width - extraWidth()) / numCols
+				) -
+				1;
 			// now we want to approximate this with
 			// DEFAULT_CELL_SIZE * Math.pow(2, k)
 			cellSize = DEFAULT_CELL_SIZE;
-			if (cellSize <= desiredCellSize)
-				while (2 * cellSize <= desiredCellSize)
-					cellSize *= 2;
-			else
-				while (cellSize / 2 >= Math.max(desiredCellSize, MIN_CELL_SIZE))
-					cellSize /= 2;
+			if (cellSize <= desiredCellSize) while (
+				2 * cellSize <= desiredCellSize
+			) cellSize *= 2; else while (
+				cellSize / 2 >= Math.max(desiredCellSize, MIN_CELL_SIZE)
+			) cellSize /= 2;
 		}
 		revalidate();
 	}
@@ -536,17 +593,22 @@ public class GridPanel extends JPanel implements Scrollable,
 	// GridPanel implements the Scrollable interface to get nicer behavior in a
 	// JScrollPane. The 5 methods below are the methods in that interface
 
-	public int getScrollableUnitIncrement(Rectangle visibleRect,
-										  int orientation, int direction) {
+	public int getScrollableUnitIncrement(
+		Rectangle visibleRect,
+		int orientation,
+		int direction
+	) {
 		return cellSize + 1;
 	}
 
-	public int getScrollableBlockIncrement(Rectangle visibleRect,
-										   int orientation, int direction) {
-		if (orientation == SwingConstants.VERTICAL)
-			return (int) (visibleRect.height * .9);
-		else
-			return (int) (visibleRect.width * .9);
+	public int getScrollableBlockIncrement(
+		Rectangle visibleRect,
+		int orientation,
+		int direction
+	) {
+		if (orientation == SwingConstants.VERTICAL) return (int) (
+			visibleRect.height * .9
+		); else return (int) (visibleRect.width * .9);
 	}
 
 	public boolean getScrollableTracksViewportWidth() {
@@ -558,8 +620,10 @@ public class GridPanel extends JPanel implements Scrollable,
 	}
 
 	public Dimension getPreferredScrollableViewportSize() {
-		return new Dimension(DEFAULT_CELL_COUNT * (DEFAULT_CELL_SIZE + 1) + 1 + extraWidth(),
-				DEFAULT_CELL_COUNT * (DEFAULT_CELL_SIZE + 1) + 1 + extraHeight());
+		return new Dimension(
+			DEFAULT_CELL_COUNT * (DEFAULT_CELL_SIZE + 1) + 1 + extraWidth(),
+			DEFAULT_CELL_COUNT * (DEFAULT_CELL_SIZE + 1) + 1 + extraHeight()
+		);
 	}
 
 	// GridPanel implements the PseudoInfiniteViewport.Pannable interface to
@@ -573,7 +637,9 @@ public class GridPanel extends JPanel implements Scrollable,
 	}
 
 	public boolean isPannableUnbounded() {
-		return grid != null && (grid.getNumRows() == -1 || grid.getNumCols() == -1);
+		return (
+			grid != null && (grid.getNumRows() == -1 || grid.getNumCols() == -1)
+		);
 	}
 
 	/**
@@ -585,11 +651,10 @@ public class GridPanel extends JPanel implements Scrollable,
 		String tipText = null;
 		Point upperLeft = new Point(0, 0);
 		JViewport vp = getEnclosingViewport();
-		if (!isPannableUnbounded() && vp != null)
-			upperLeft = vp.getViewPosition();
+		if (!isPannableUnbounded() && vp != null) upperLeft =
+			vp.getViewPosition();
 		Location loc = locationForPoint(upperLeft);
-		if (loc != null)
-			tipText = getToolTipText(loc);
+		if (loc != null) tipText = getToolTipText(loc);
 
 		showTip(tipText, getLocation());
 	}

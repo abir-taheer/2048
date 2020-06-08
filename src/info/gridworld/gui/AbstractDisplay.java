@@ -36,17 +36,16 @@ import java.lang.reflect.Method;
  */
 
 public abstract class AbstractDisplay implements Display {
+
 	public static Object getProperty(Object obj, String propertyName) {
-		if (obj == null)
-			return null;
+		if (obj == null) return null;
 		try {
 			BeanInfo info = Introspector.getBeanInfo(obj.getClass());
 			PropertyDescriptor[] descriptors = info.getPropertyDescriptors();
 			for (int i = 0; i < descriptors.length; i++) {
 				if (descriptors[i].getName().equals(propertyName)) {
 					Method getter = descriptors[i].getReadMethod();
-					if (getter == null)
-						return null;
+					if (getter == null) return null;
 					try {
 						return getter.invoke(obj);
 					} catch (Exception ex) {
@@ -70,7 +69,7 @@ public abstract class AbstractDisplay implements Display {
 	 * @param comp the component on which to draw
 	 * @param g2   the graphics context
 	 */
-	abstract public void draw(Object obj, Component comp, Graphics2D g2);
+	public abstract void draw(Object obj, Component comp, Graphics2D g2);
 
 	/**
 	 * Draw the given object. Scales and rotates the coordinate appropriately
@@ -82,7 +81,12 @@ public abstract class AbstractDisplay implements Display {
 	 * @param g2   the graphics context
 	 * @param rect rectangle in which to draw
 	 */
-	public void draw(Object obj, Component comp, Graphics2D g2, Rectangle rect) {
+	public void draw(
+		Object obj,
+		Component comp,
+		Graphics2D g2,
+		Rectangle rect
+	) {
 		float scaleFactor = Math.min(rect.width, rect.height);
 		g2 = (Graphics2D) g2.create();
 
@@ -93,8 +97,9 @@ public abstract class AbstractDisplay implements Display {
 		// orientation (direction).
 		if (obj != null) {
 			Integer direction = (Integer) getProperty(obj, "direction");
-			int rotationInDegrees = direction == null ? 0 : direction
-					.intValue();
+			int rotationInDegrees = direction == null
+				? 0
+				: direction.intValue();
 			g2.rotate(Math.toRadians(rotationInDegrees));
 		}
 		// Scale to size of rectangle, adjust stroke back to 1-pixel wide

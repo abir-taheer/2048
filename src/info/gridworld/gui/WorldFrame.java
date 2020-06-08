@@ -22,10 +22,6 @@ package info.gridworld.gui;
 import info.gridworld.grid.Grid;
 import info.gridworld.grid.Location;
 import info.gridworld.world.World;
-
-import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.PrintWriter;
@@ -33,6 +29,9 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 /**
  * The WorldFrame displays a World and allows manipulation of its occupants.
@@ -61,23 +60,27 @@ public class WorldFrame<T> extends JFrame {
 	public WorldFrame(World<T> world) {
 		this.world = world;
 		count++;
-		resources = ResourceBundle
-				.getBundle(getClass().getName() + "Resources");
+		resources =
+			ResourceBundle.getBundle(getClass().getName() + "Resources");
 
 		try {
-			System.setProperty("sun.awt.exception.handler",
-					GUIExceptionHandler.class.getName());
+			System.setProperty(
+				"sun.awt.exception.handler",
+				GUIExceptionHandler.class.getName()
+			);
 		} catch (SecurityException ex) {
 			// will fail in an applet
 		}
 
-		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent event) {
-				count--;
-				if (count == 0)
-					System.exit(0);
+		addWindowListener(
+			new WindowAdapter() {
+
+				public void windowClosing(WindowEvent event) {
+					count--;
+					if (count == 0) System.exit(0);
+				}
 			}
-		});
+		);
 
 		displayMap = new DisplayMap();
 		String title = System.getProperty("info.gridworld.gui.frametitle");
@@ -98,51 +101,62 @@ public class WorldFrame<T> extends JFrame {
 
 		display = new GridPanel(displayMap, resources);
 
-		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new
-																							KeyEventDispatcher() {
-																								public boolean dispatchKeyEvent(KeyEvent event) {
-																									if (getFocusOwner() == null)
-																										return false;
-																									String text = KeyStroke.getKeyStrokeForEvent(event).toString();
-																									final String PRESSED = "pressed ";
-																									int n = text.indexOf(PRESSED);
-																									if (n < 0)
-																										return false;
-																									// filter out modifier keys; they are neither characters or actions
-																									if (event.getKeyChar() == KeyEvent.CHAR_UNDEFINED && !event.isActionKey())
-																										return false;
-																									text = text.substring(0, n) + text.substring(n + PRESSED.length());
-																									boolean consumed = getWorld().keyPressed(text, display.getCurrentLocation());
-																									if (consumed)
-																										repaint();
-																									return consumed;
-																								}
-																							});
+		KeyboardFocusManager
+			.getCurrentKeyboardFocusManager()
+			.addKeyEventDispatcher(
+				new KeyEventDispatcher() {
+
+					public boolean dispatchKeyEvent(KeyEvent event) {
+						if (getFocusOwner() == null) return false;
+						String text = KeyStroke
+							.getKeyStrokeForEvent(event)
+							.toString();
+						final String PRESSED = "pressed ";
+						int n = text.indexOf(PRESSED);
+						if (n < 0) return false;
+						// filter out modifier keys; they are neither characters or actions
+						if (
+							event.getKeyChar() == KeyEvent.CHAR_UNDEFINED &&
+							!event.isActionKey()
+						) return false;
+						text =
+							text.substring(0, n) +
+							text.substring(n + PRESSED.length());
+						boolean consumed = getWorld()
+							.keyPressed(text, display.getCurrentLocation());
+						if (consumed) repaint();
+						return consumed;
+					}
+				}
+			);
 
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setViewport(new PseudoInfiniteViewport(scrollPane));
 		scrollPane.setViewportView(display);
 		content.add(scrollPane, BorderLayout.CENTER);
 
-		gridClasses = new TreeSet<Class>(new Comparator<Class>() {
-			public int compare(Class a, Class b) {
-				return a.getName().compareTo(b.getName());
-			}
-		});
-		for (String name : world.getGridClasses())
-			try {
-				gridClasses.add(Class.forName(name));
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
+		gridClasses =
+			new TreeSet<Class>(
+				new Comparator<Class>() {
+
+					public int compare(Class a, Class b) {
+						return a.getName().compareTo(b.getName());
+					}
+				}
+			);
+		for (String name : world.getGridClasses()) try {
+			gridClasses.add(Class.forName(name));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 
 		Grid<T> gr = world.getGrid();
 		gridClasses.add(gr.getClass());
 
 		makeNewGridMenu();
 
-//        control = new GUIController<T>(this, display, displayMap, resources);
-//        content.add(control.controlPanel(), BorderLayout.SOUTH);
+		//        control = new GUIController<T>(this, display, displayMap, resources);
+		//        content.add(control.controlPanel(), BorderLayout.SOUTH);
 
 		messageArea = new JTextArea(2, 35);
 		messageArea.setEditable(false);
@@ -157,8 +171,7 @@ public class WorldFrame<T> extends JFrame {
 
 	public void repaint() {
 		String message = getWorld().getMessage();
-		if (message == null)
-			message = resources.getString("message.default");
+		if (message == null) message = resources.getString("message.default");
 		messageArea.setText(message);
 		messageArea.repaint();
 		display.repaint(); // for applet
@@ -183,13 +196,14 @@ public class WorldFrame<T> extends JFrame {
 	public void setGrid(Grid<T> newGrid) {
 		Grid<T> oldGrid = world.getGrid();
 		Map<Location, T> occupants = new HashMap<Location, T>();
-		for (Location loc : oldGrid.getOccupiedLocations())
-			occupants.put(loc, world.remove(loc));
+		for (Location loc : oldGrid.getOccupiedLocations()) occupants.put(
+			loc,
+			world.remove(loc)
+		);
 
 		world.setGrid(newGrid);
 		for (Location loc : occupants.keySet()) {
-			if (newGrid.isValid(loc))
-				world.add(loc, occupants.get(loc));
+			if (newGrid.isValid(loc)) world.add(loc, occupants.get(loc));
 		}
 
 		display.setGrid(newGrid);
@@ -219,11 +233,14 @@ public class WorldFrame<T> extends JFrame {
 		}
 
 		String reason = resources.getString("error.reason");
-		String message = text + "\n"
-				+ MessageFormat.format(reason, t);
+		String message = text + "\n" + MessageFormat.format(reason, t);
 
-		JOptionPane.showMessageDialog(this, message, title,
-				JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(
+			this,
+			message,
+			title,
+			JOptionPane.ERROR_MESSAGE
+		);
 	}
 
 	// Creates the drop-down menus on the frame.
@@ -240,8 +257,11 @@ public class WorldFrame<T> extends JFrame {
 		return item;
 	}
 
-	private void configureMenuItem(JMenuItem item, String resource,
-								   ActionListener listener) {
+	private void configureMenuItem(
+		JMenuItem item,
+		String resource,
+		ActionListener listener
+	) {
 		configureAbstractButton(item, resource);
 		item.addActionListener(listener);
 		try {
@@ -249,9 +269,12 @@ public class WorldFrame<T> extends JFrame {
 			String metaPrefix = "@";
 			if (accel.startsWith(metaPrefix)) {
 				int menuMask = getToolkit().getMenuShortcutKeyMask();
-				KeyStroke key = KeyStroke.getKeyStroke(KeyStroke.getKeyStroke(
-						accel.substring(metaPrefix.length())).getKeyCode(),
-						menuMask);
+				KeyStroke key = KeyStroke.getKeyStroke(
+					KeyStroke
+						.getKeyStroke(accel.substring(metaPrefix.length()))
+						.getKeyCode(),
+					menuMask
+				);
 				item.setAccelerator(key);
 			} else {
 				item.setAccelerator(KeyStroke.getKeyStroke(accel));
@@ -261,7 +284,10 @@ public class WorldFrame<T> extends JFrame {
 		}
 	}
 
-	private void configureAbstractButton(AbstractButton button, String resource) {
+	private void configureAbstractButton(
+		AbstractButton button,
+		String resource
+	) {
 		String title = resources.getString(resource);
 		int i = title.indexOf('&');
 		int mnemonic = 0;
@@ -271,8 +297,7 @@ public class WorldFrame<T> extends JFrame {
 			button.setText(title);
 			button.setMnemonic(Character.toUpperCase(mnemonic));
 			button.setDisplayedMnemonicIndex(i);
-		} else
-			button.setText(title);
+		} else button.setText(title);
 	}
 
 	private void makeMenus() {
@@ -287,81 +312,153 @@ public class WorldFrame<T> extends JFrame {
 		menu.add(newGridMenu);
 		menuItemsDisabledDuringRun.add(newGridMenu);
 
-		menu.add(makeMenuItem("menu.file.quit", new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		}));
+		menu.add(
+			makeMenuItem(
+				"menu.file.quit",
+				new ActionListener() {
+
+					public void actionPerformed(ActionEvent e) {
+						System.exit(0);
+					}
+				}
+			)
+		);
 
 		mbar.add(menu = makeMenu("menu.view"));
 
-		menu.add(makeMenuItem("menu.view.up", new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				display.moveLocation(-1, 0);
-			}
-		}));
-		menu.add(makeMenuItem("menu.view.down", new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				display.moveLocation(1, 0);
-			}
-		}));
-		menu.add(makeMenuItem("menu.view.left", new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				display.moveLocation(0, -1);
-			}
-		}));
-		menu.add(makeMenuItem("menu.view.right", new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				display.moveLocation(0, 1);
-			}
-		}));
+		menu.add(
+			makeMenuItem(
+				"menu.view.up",
+				new ActionListener() {
+
+					public void actionPerformed(ActionEvent e) {
+						display.moveLocation(-1, 0);
+					}
+				}
+			)
+		);
+		menu.add(
+			makeMenuItem(
+				"menu.view.down",
+				new ActionListener() {
+
+					public void actionPerformed(ActionEvent e) {
+						display.moveLocation(1, 0);
+					}
+				}
+			)
+		);
+		menu.add(
+			makeMenuItem(
+				"menu.view.left",
+				new ActionListener() {
+
+					public void actionPerformed(ActionEvent e) {
+						display.moveLocation(0, -1);
+					}
+				}
+			)
+		);
+		menu.add(
+			makeMenuItem(
+				"menu.view.right",
+				new ActionListener() {
+
+					public void actionPerformed(ActionEvent e) {
+						display.moveLocation(0, 1);
+					}
+				}
+			)
+		);
 
 		JMenuItem viewEditMenu;
-		menu.add(viewEditMenu = makeMenuItem("menu.view.edit",
-				new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						control.editLocation();
+		menu.add(
+			viewEditMenu =
+				makeMenuItem(
+					"menu.view.edit",
+					new ActionListener() {
+
+						public void actionPerformed(ActionEvent e) {
+							control.editLocation();
+						}
 					}
-				}));
+				)
+		);
 		menuItemsDisabledDuringRun.add(viewEditMenu);
 
 		JMenuItem viewDeleteMenu;
-		menu.add(viewDeleteMenu = makeMenuItem("menu.view.delete",
-				new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						control.deleteLocation();
+		menu.add(
+			viewDeleteMenu =
+				makeMenuItem(
+					"menu.view.delete",
+					new ActionListener() {
+
+						public void actionPerformed(ActionEvent e) {
+							control.deleteLocation();
+						}
 					}
-				}));
+				)
+		);
 		menuItemsDisabledDuringRun.add(viewDeleteMenu);
 
-		menu.add(makeMenuItem("menu.view.zoomin", new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				display.zoomIn();
-			}
-		}));
+		menu.add(
+			makeMenuItem(
+				"menu.view.zoomin",
+				new ActionListener() {
 
-		menu.add(makeMenuItem("menu.view.zoomout", new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				display.zoomOut();
-			}
-		}));
+					public void actionPerformed(ActionEvent e) {
+						display.zoomIn();
+					}
+				}
+			)
+		);
+
+		menu.add(
+			makeMenuItem(
+				"menu.view.zoomout",
+				new ActionListener() {
+
+					public void actionPerformed(ActionEvent e) {
+						display.zoomOut();
+					}
+				}
+			)
+		);
 
 		mbar.add(menu = makeMenu("menu.help"));
-		menu.add(makeMenuItem("menu.help.about", new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				showAboutPanel();
-			}
-		}));
-		menu.add(makeMenuItem("menu.help.help", new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				showHelp();
-			}
-		}));
-		menu.add(makeMenuItem("menu.help.license", new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				showLicense();
-			}
-		}));
+		menu.add(
+			makeMenuItem(
+				"menu.help.about",
+				new ActionListener() {
+
+					public void actionPerformed(ActionEvent e) {
+						showAboutPanel();
+					}
+				}
+			)
+		);
+		menu.add(
+			makeMenuItem(
+				"menu.help.help",
+				new ActionListener() {
+
+					public void actionPerformed(ActionEvent e) {
+						showHelp();
+					}
+				}
+			)
+		);
+		menu.add(
+			makeMenuItem(
+				"menu.help.license",
+				new ActionListener() {
+
+					public void actionPerformed(ActionEvent e) {
+						showLicense();
+					}
+				}
+			)
+		);
 
 		setRunMenuItemsEnabled(true);
 		setJMenuBar(mbar);
@@ -380,17 +477,30 @@ public class WorldFrame<T> extends JFrame {
 	 * @param enable true to enable the menus
 	 */
 	public void setRunMenuItemsEnabled(boolean enable) {
-		for (JMenuItem item : menuItemsDisabledDuringRun)
-			item.setEnabled(enable);
+		for (JMenuItem item : menuItemsDisabledDuringRun) item.setEnabled(
+			enable
+		);
 	}
 
 	/**
 	 * Brings up a simple dialog with some general information.
 	 */
 	private void showAboutPanel() {
-		String html = MessageFormat.format(resources
-				.getString("dialog.about.text"), resources.getString("version.id"));
-		String[] props = {"java.version", "java.vendor", "java.home", "os.name", "os.arch", "os.version", "user.name", "user.home", "user.dir"};
+		String html = MessageFormat.format(
+			resources.getString("dialog.about.text"),
+			resources.getString("version.id")
+		);
+		String[] props = {
+			"java.version",
+			"java.vendor",
+			"java.home",
+			"os.name",
+			"os.arch",
+			"os.version",
+			"user.name",
+			"user.home",
+			"user.dir",
+		};
 		html += "<table border='1'>";
 		for (String prop : props) {
 			try {
@@ -402,9 +512,12 @@ public class WorldFrame<T> extends JFrame {
 		}
 		html += "</table>";
 		html = "<html>" + html + "</html>";
-		JOptionPane.showMessageDialog(this, new JLabel(html), resources
-						.getString("dialog.about.title"),
-				JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(
+			this,
+			new JLabel(html),
+			resources.getString("dialog.about.title"),
+			JOptionPane.INFORMATION_MESSAGE
+		);
 	}
 
 	/**
@@ -412,8 +525,10 @@ public class WorldFrame<T> extends JFrame {
 	 * information.
 	 */
 	private void showHelp() {
-		JDialog dialog = new JDialog(this, resources
-				.getString("dialog.help.title"));
+		JDialog dialog = new JDialog(
+			this,
+			resources.getString("dialog.help.title")
+		);
 		final JEditorPane helpText = new JEditorPane();
 		try {
 			URL url = getClass().getResource("GridWorldHelp.html");
@@ -423,15 +538,18 @@ public class WorldFrame<T> extends JFrame {
 			helpText.setText(resources.getString("dialog.help.error"));
 		}
 		helpText.setEditable(false);
-		helpText.addHyperlinkListener(new HyperlinkListener() {
-			public void hyperlinkUpdate(HyperlinkEvent ev) {
-				if (ev.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
-					try {
+		helpText.addHyperlinkListener(
+			new HyperlinkListener() {
+
+				public void hyperlinkUpdate(HyperlinkEvent ev) {
+					if (
+						ev.getEventType() == HyperlinkEvent.EventType.ACTIVATED
+					) try {
 						helpText.setPage(ev.getURL());
-					} catch (Exception ex) {
-					}
+					} catch (Exception ex) {}
+				}
 			}
-		});
+		);
 		JScrollPane sp = new JScrollPane(helpText);
 		sp.setPreferredSize(new Dimension(650, 500));
 		dialog.getContentPane().add(sp);
@@ -444,8 +562,10 @@ public class WorldFrame<T> extends JFrame {
 	 * Brings up a dialog that displays the license.
 	 */
 	private void showLicense() {
-		JDialog dialog = new JDialog(this, resources
-				.getString("dialog.license.title"));
+		JDialog dialog = new JDialog(
+			this,
+			resources.getString("dialog.license.title")
+		);
 		final JEditorPane text = new JEditorPane();
 		try {
 			URL url = getClass().getResource("GNULicense.txt");
@@ -469,6 +589,7 @@ public class WorldFrame<T> extends JFrame {
 	 * stack trace to the console.
 	 */
 	public class GUIExceptionHandler {
+
 		public void handle(Throwable e) {
 			e.printStackTrace();
 
@@ -478,10 +599,13 @@ public class WorldFrame<T> extends JFrame {
 			area.setText(writer.toString());
 			area.setCaretPosition(0);
 			String copyOption = resources.getString("dialog.error.copy");
-			JOptionPane pane = new JOptionPane(new JScrollPane(area),
-					JOptionPane.ERROR_MESSAGE, JOptionPane.YES_NO_OPTION, null,
-					new String[]
-							{copyOption, resources.getString("cancel")});
+			JOptionPane pane = new JOptionPane(
+				new JScrollPane(area),
+				JOptionPane.ERROR_MESSAGE,
+				JOptionPane.YES_NO_OPTION,
+				null,
+				new String[] { copyOption, resources.getString("cancel") }
+			);
 			pane.createDialog(WorldFrame.this, e.toString()).setVisible(true);
 			if (copyOption.equals(pane.getValue())) {
 				area.setSelectionStart(0);

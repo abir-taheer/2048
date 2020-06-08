@@ -19,10 +19,10 @@
 
 package info.gridworld.gui;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.HashMap;
+import javax.swing.*;
 
 /**
  * <code>DisplayMap</code> is a collection that maps grid occupant
@@ -76,11 +76,9 @@ public class DisplayMap {
 		// Go up through the class hierarchy for obj and see
 		// if there is a display for its class or superclasses.
 
-		if (cl == Object.class)
-			return defaultDisplay;
+		if (cl == Object.class) return defaultDisplay;
 		Display display = map.get(cl);
-		if (display != null)
-			return display;
+		if (display != null) return display;
 		display = createDisplay(cl);
 		if (display != null) {
 			map.put(cl, display);
@@ -125,8 +123,12 @@ public class DisplayMap {
 		public void paintIcon(Component comp, Graphics g, int x, int y) {
 			Graphics2D g2 = (Graphics2D) g;
 			AffineTransform savedTransform = g2.getTransform(); // save current
-			displayObj.draw(null, comp, g2, new Rectangle(x, y, getIconWidth(),
-					getIconHeight()));
+			displayObj.draw(
+				null,
+				comp,
+				g2,
+				new Rectangle(x, y, getIconWidth(), getIconHeight())
+			);
 			g2.setTransform(savedTransform); // restore coordinate system
 		}
 	}

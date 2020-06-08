@@ -21,10 +21,6 @@ package info.gridworld.gui;
 import info.gridworld.grid.Grid;
 import info.gridworld.grid.Location;
 import info.gridworld.world.World;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,6 +31,9 @@ import java.util.Comparator;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * The GUIController controls the behavior in a WorldFrame. <br />
@@ -47,8 +46,8 @@ public class GUIController<T> {
 	public static final int INDEFINITE = 0, FIXED_STEPS = 1, PROMPT_STEPS = 2;
 
 	private static final int MIN_DELAY_MSECS = 10, MAX_DELAY_MSECS = 1000;
-	private static final int INITIAL_DELAY = MIN_DELAY_MSECS
-			+ (MAX_DELAY_MSECS - MIN_DELAY_MSECS) / 2;
+	private static final int INITIAL_DELAY =
+		MIN_DELAY_MSECS + (MAX_DELAY_MSECS - MIN_DELAY_MSECS) / 2;
 	//
 
 	private final Timer timer;
@@ -71,47 +70,61 @@ public class GUIController<T> {
 	 * @param displayMap the map for occupant displays
 	 * @param res        the resource bundle for message display
 	 */
-	public GUIController(WorldFrame<T> parent, GridPanel disp,
-						 DisplayMap displayMap, ResourceBundle res) {
+	public GUIController(
+		WorldFrame<T> parent,
+		GridPanel disp,
+		DisplayMap displayMap,
+		ResourceBundle res
+	) {
 		resources = res;
 		display = disp;
 		parentFrame = parent;
 		this.displayMap = displayMap;
-//        makeControls();
+		//        makeControls();
 
-		occupantClasses = new TreeSet<Class>(new Comparator<Class>() {
-			public int compare(Class a, Class b) {
-				return a.getName().compareTo(b.getName());
-			}
-		});
+		occupantClasses =
+			new TreeSet<Class>(
+				new Comparator<Class>() {
+
+					public int compare(Class a, Class b) {
+						return a.getName().compareTo(b.getName());
+					}
+				}
+			);
 
 		World<T> world = parentFrame.getWorld();
 		Grid<T> gr = world.getGrid();
-		for (Location loc : gr.getOccupiedLocations())
-			addOccupant(gr.get(loc));
-		for (String name : world.getOccupantClasses())
-			try {
-				occupantClasses.add(Class.forName(name));
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
+		for (Location loc : gr.getOccupiedLocations()) addOccupant(gr.get(loc));
+		for (String name : world.getOccupantClasses()) try {
+			occupantClasses.add(Class.forName(name));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 
-		timer = new Timer(INITIAL_DELAY, new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				step();
-			}
-		});
+		timer =
+			new Timer(
+				INITIAL_DELAY,
+				new ActionListener() {
 
-		display.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent evt) {
-				Grid<T> gr = parentFrame.getWorld().getGrid();
-				Location loc = display.locationForPoint(evt.getPoint());
-				if (loc != null && gr.isValid(loc) && !isRunning()) {
-					display.setCurrentLocation(loc);
-					locationClicked();
+					public void actionPerformed(ActionEvent evt) {
+						step();
+					}
+				}
+			);
+
+		display.addMouseListener(
+			new MouseAdapter() {
+
+				public void mousePressed(MouseEvent evt) {
+					Grid<T> gr = parentFrame.getWorld().getGrid();
+					Location loc = display.locationForPoint(evt.getPoint());
+					if (loc != null && gr.isValid(loc) && !isRunning()) {
+						display.setCurrentLocation(loc);
+						locationClicked();
+					}
 				}
 			}
-		});
+		);
 		stop();
 	}
 
@@ -121,22 +134,20 @@ public class GUIController<T> {
 	public void step() {
 		parentFrame.getWorld().step();
 		parentFrame.repaint();
-		if (++numStepsSoFar == numStepsToRun)
-			stop();
+		if (++numStepsSoFar == numStepsToRun) stop();
 		Grid<T> gr = parentFrame.getWorld().getGrid();
 
-		for (Location loc : gr.getOccupiedLocations())
-			addOccupant(gr.get(loc));
+		for (Location loc : gr.getOccupiedLocations()) addOccupant(gr.get(loc));
 	}
 
 	private void addOccupant(T occupant) {
 		Class cl = occupant.getClass();
 		do {
-			if ((cl.getModifiers() & Modifier.ABSTRACT) == 0)
-				occupantClasses.add(cl);
+			if (
+				(cl.getModifiers() & Modifier.ABSTRACT) == 0
+			) occupantClasses.add(cl);
 			cl = cl.getSuperclass();
-		}
-		while (cl != Object.class);
+		} while (cl != Object.class);
 	}
 
 	/**
@@ -180,18 +191,22 @@ public class GUIController<T> {
 		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.X_AXIS));
 		controlPanel.setBorder(BorderFactory.createEtchedBorder());
 
-//        controlPanel.add(Box.createRigidArea(spacer));
-//        controlPanel.add(Box.createRigidArea(spacer));
+		//        controlPanel.add(Box.createRigidArea(spacer));
+		//        controlPanel.add(Box.createRigidArea(spacer));
 		controlPanel.add(stopButton);
 		stopButton.setEnabled(false);
 
-//        controlPanel.add(Box.createRigidArea(spacer));
+		//        controlPanel.add(Box.createRigidArea(spacer));
 		controlPanel.add(new JLabel(resources.getString("slider.gui.slow")));
-		JSlider speedSlider = new JSlider(MIN_DELAY_MSECS, MAX_DELAY_MSECS,
-				INITIAL_DELAY);
+		JSlider speedSlider = new JSlider(
+			MIN_DELAY_MSECS,
+			MAX_DELAY_MSECS,
+			INITIAL_DELAY
+		);
 		speedSlider.setInverted(true);
-		speedSlider.setPreferredSize(new Dimension(100, speedSlider
-				.getPreferredSize().height));
+		speedSlider.setPreferredSize(
+			new Dimension(100, speedSlider.getPreferredSize().height)
+		);
 		speedSlider.setMaximumSize(speedSlider.getPreferredSize());
 
 		// remove control PAGE_UP, PAGE_DOWN from slider--they should be used
@@ -207,16 +222,22 @@ public class GUIController<T> {
 		controlPanel.add(new JLabel(resources.getString("slider.gui.fast")));
 		controlPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 
-		stopButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				stop();
+		stopButton.addActionListener(
+			new ActionListener() {
+
+				public void actionPerformed(ActionEvent e) {
+					stop();
+				}
 			}
-		});
-		speedSlider.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent evt) {
-				timer.setDelay(((JSlider) evt.getSource()).getValue());
+		);
+		speedSlider.addChangeListener(
+			new ChangeListener() {
+
+				public void stateChanged(ChangeEvent evt) {
+					timer.setDelay(((JSlider) evt.getSource()).getValue());
+				}
 			}
-		});
+		);
 	}
 
 	/**
@@ -234,8 +255,7 @@ public class GUIController<T> {
 	private void locationClicked() {
 		World<T> world = parentFrame.getWorld();
 		Location loc = display.getCurrentLocation();
-		if (loc != null && !world.locationClicked(loc))
-			editLocation();
+		if (loc != null && !world.locationClicked(loc)) editLocation();
 		parentFrame.repaint();
 	}
 
@@ -250,15 +270,23 @@ public class GUIController<T> {
 		if (loc != null) {
 			T occupant = world.getGrid().get(loc);
 			if (occupant == null) {
-				MenuMaker<T> maker = new MenuMaker<T>(parentFrame, resources,
-						displayMap);
-				JPopupMenu popup = maker.makeConstructorMenu(occupantClasses,
-						loc);
+				MenuMaker<T> maker = new MenuMaker<T>(
+					parentFrame,
+					resources,
+					displayMap
+				);
+				JPopupMenu popup = maker.makeConstructorMenu(
+					occupantClasses,
+					loc
+				);
 				Point p = display.pointForLocation(loc);
 				popup.show(display, p.x, p.y);
 			} else {
-				MenuMaker<T> maker = new MenuMaker<T>(parentFrame, resources,
-						displayMap);
+				MenuMaker<T> maker = new MenuMaker<T>(
+					parentFrame,
+					resources,
+					displayMap
+				);
 				JPopupMenu popup = maker.makeMethodMenu(occupant, loc);
 				Point p = display.pointForLocation(loc);
 				popup.show(display, p.x, p.y);

@@ -17,7 +17,6 @@
 package info.gridworld.actor;
 
 import info.gridworld.grid.Location;
-
 import java.util.ArrayList;
 
 /**
@@ -29,14 +28,14 @@ import java.util.ArrayList;
  * The implementation of this class is testable on the AP CS A and AB exams.
  */
 public class Critter extends Actor {
+
 	/**
 	 * A critter acts by getting a list of other actors, processing that list,
 	 * getting locations to move to, selecting one of them, and moving to the
 	 * selected location.
 	 */
 	public void act() {
-		if (getGrid() == null)
-			return;
+		if (getGrid() == null) return;
 		ArrayList<Actor> actors = getActors();
 		processActors(actors);
 		ArrayList<Location> moveLocs = getMoveLocations();
@@ -69,8 +68,9 @@ public class Critter extends Actor {
 	 */
 	public void processActors(ArrayList<Actor> actors) {
 		for (Actor a : actors) {
-			if (!(a instanceof Rock) && !(a instanceof Critter))
-				a.removeSelfFromGrid();
+			if (
+				!(a instanceof Rock) && !(a instanceof Critter)
+			) a.removeSelfFromGrid();
 		}
 	}
 
@@ -101,8 +101,7 @@ public class Critter extends Actor {
 	 */
 	public Location selectMoveLocation(ArrayList<Location> locs) {
 		int n = locs.size();
-		if (n == 0)
-			return getLocation();
+		if (n == 0) return getLocation();
 		int r = (int) (Math.random() * n);
 		return locs.get(r);
 	}
@@ -121,9 +120,6 @@ public class Critter extends Actor {
 	 * @param loc the location to move to
 	 */
 	public void makeMove(Location loc) {
-		if (loc == null)
-			removeSelfFromGrid();
-		else
-			moveTo(loc);
+		if (loc == null) removeSelfFromGrid(); else moveTo(loc);
 	}
 }

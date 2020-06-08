@@ -19,7 +19,6 @@ package info.gridworld.actor;
 import info.gridworld.grid.Grid;
 import info.gridworld.grid.Location;
 import info.gridworld.world.World;
-
 import java.util.ArrayList;
 
 /**
@@ -28,13 +27,13 @@ import java.util.ArrayList;
  */
 
 public class ActorWorld extends World<Actor> {
-	private static final String DEFAULT_MESSAGE = "Use the arrow keys on your keyboard to play.";
+	private static final String DEFAULT_MESSAGE =
+		"Use the arrow keys on your keyboard to play.";
 
 	/**
 	 * Constructs an actor world with a default grid.
 	 */
-	public ActorWorld() {
-	}
+	public ActorWorld() {}
 
 	/**
 	 * Constructs an actor world with a given grid.
@@ -46,21 +45,18 @@ public class ActorWorld extends World<Actor> {
 	}
 
 	public void show() {
-		if (getMessage() == null)
-			setMessage(DEFAULT_MESSAGE);
+		if (getMessage() == null) setMessage(DEFAULT_MESSAGE);
 		super.show();
 	}
 
 	public void step() {
 		Grid<Actor> gr = getGrid();
 		ArrayList<Actor> actors = new ArrayList<Actor>();
-		for (Location loc : gr.getOccupiedLocations())
-			actors.add(gr.get(loc));
+		for (Location loc : gr.getOccupiedLocations()) actors.add(gr.get(loc));
 
 		for (Actor a : actors) {
 			// only act if another actor hasn't removed a
-			if (a.getGrid() == gr)
-				a.act();
+			if (a.getGrid() == gr) a.act();
 		}
 	}
 
@@ -81,8 +77,7 @@ public class ActorWorld extends World<Actor> {
 	 */
 	public void add(Actor occupant) {
 		Location loc = getRandomEmptyLocation();
-		if (loc != null)
-			add(loc, occupant);
+		if (loc != null) add(loc, occupant);
 	}
 
 	/**
@@ -94,8 +89,7 @@ public class ActorWorld extends World<Actor> {
 	 */
 	public Actor remove(Location loc) {
 		Actor occupant = getGrid().get(loc);
-		if (occupant == null)
-			return null;
+		if (occupant == null) return null;
 		occupant.removeSelfFromGrid();
 		return occupant;
 	}

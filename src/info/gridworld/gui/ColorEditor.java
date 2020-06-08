@@ -16,9 +16,9 @@
 
 package info.gridworld.gui;
 
-import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyEditorSupport;
+import javax.swing.*;
 
 /**
  * A property editor for the Color type. <br />
@@ -27,17 +27,28 @@ import java.beans.PropertyEditorSupport;
  * students.
  */
 public class ColorEditor extends PropertyEditorSupport {
-	private static final Color[] colorValues =
-			{Color.BLACK, Color.BLUE, Color.CYAN, Color.DARK_GRAY, Color.GRAY,
-					Color.GREEN, Color.LIGHT_GRAY, Color.MAGENTA, Color.ORANGE,
-					Color.PINK, Color.RED, Color.WHITE, Color.YELLOW};
+	private static final Color[] colorValues = {
+		Color.BLACK,
+		Color.BLUE,
+		Color.CYAN,
+		Color.DARK_GRAY,
+		Color.GRAY,
+		Color.GREEN,
+		Color.LIGHT_GRAY,
+		Color.MAGENTA,
+		Color.ORANGE,
+		Color.PINK,
+		Color.RED,
+		Color.WHITE,
+		Color.YELLOW,
+	};
 	private static final ColorIcon[] colorIcons;
 
 	static {
 		colorIcons = new ColorIcon[colorValues.length + 1];
 		colorIcons[0] = new RandomColorIcon();
-		for (int i = 0; i < colorValues.length; i++)
-			colorIcons[i + 1] = new SolidColorIcon(colorValues[i]);
+		for (int i = 0; i < colorValues.length; i++) colorIcons[i + 1] =
+			new SolidColorIcon(colorValues[i]);
 	}
 
 	private final JComboBox combo;
@@ -99,6 +110,7 @@ public class ColorEditor extends PropertyEditorSupport {
 	}
 
 	private static class RandomColorIcon implements ColorIcon {
+
 		public Color getColor() {
 			return new Color((int) (Math.random() * 256 * 256 * 256));
 		}

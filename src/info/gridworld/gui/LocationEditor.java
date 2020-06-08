@@ -17,11 +17,10 @@
 package info.gridworld.gui;
 
 import info.gridworld.grid.Location;
-
-import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyEditorSupport;
 import java.text.NumberFormat;
+import javax.swing.*;
 
 /**
  * A property editor for the Location type. <br />
@@ -30,10 +29,12 @@ import java.text.NumberFormat;
  * students.
  */
 public class LocationEditor extends PropertyEditorSupport {
-	private final JFormattedTextField rowField = new JFormattedTextField(NumberFormat
-			.getIntegerInstance());
-	private final JFormattedTextField colField = new JFormattedTextField(NumberFormat
-			.getIntegerInstance());
+	private final JFormattedTextField rowField = new JFormattedTextField(
+		NumberFormat.getIntegerInstance()
+	);
+	private final JFormattedTextField colField = new JFormattedTextField(
+		NumberFormat.getIntegerInstance()
+	);
 	private final JPanel panel = new JPanel();
 
 	public LocationEditor() {

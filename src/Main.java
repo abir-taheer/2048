@@ -1,8 +1,9 @@
+import info.gridworld.grid.UnboundedGrid;
 import tiles.Tile;
 import tiles.Tile2;
-import info.gridworld.grid.UnboundedGrid;
 
 public class Main {
+
 	public static void main(String[] args) {
 		World world = new World();
 		for (int i = 0; i < 16; i++) {
