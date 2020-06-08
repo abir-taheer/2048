@@ -1,5 +1,6 @@
 import tiles.Tile;
 import tiles.Tile2;
+import info.gridworld.grid.UnboundedGrid;
 
 public class Main {
 	public static void main(String[] args) {
