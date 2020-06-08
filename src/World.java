@@ -9,6 +9,7 @@ import tiles.Tile2;
 public class World extends ActorWorld {
 	boolean gameOver = false;
 	int score = 0;
+	boolean hasMoved = false;
 
 	public boolean keyPressed(String description, Location loc) {
 		if (!gameOver) {
@@ -74,25 +75,33 @@ public class World extends ActorWorld {
 			direction.equals("LEFT") ||
 			direction.equals("RIGHT")
 		) {
-			shiftValues(dir);
+			ArrayList<Location> tileLocations = getGrid().getOccupiedLocations();
+			ArrayList beforeVals = getValueMappings(tileLocations);
 
+			shiftValues(dir);
 			refreshTiles();
 
-			setMessage("Score: " + score);
+			ArrayList afterVals = getValueMappings(tileLocations);
 
-			checkWin();
+			if(hasChanged(beforeVals, afterVals)){
 
-			ArrayList<Tile> emptyTiles = getEmptyTiles();
+				setMessage("Score: " + score);
 
-			if (emptyTiles.size() > 0) {
-				generateTile(emptyTiles);
+				checkWin();
+
+				ArrayList<Tile> emptyTiles = getEmptyTiles();
+
+				if (emptyTiles.size() > 0) {
+					generateTile(emptyTiles);
+				}
+
+				checkGameOver();
 			}
-
-			checkGameOver();
 		}
 	}
 
 	public void shiftValues(int dir) {
+		hasMoved = false;
 		Grid<Actor> grid = getGrid();
 
 		boolean isReversed = dir == Location.SOUTH || dir == Location.EAST;
@@ -119,12 +128,14 @@ public class World extends ActorWorld {
 						next.removeSelfFromGrid();
 						cur.moveTo(adj);
 						next.putSelfInGrid(grid, loc);
+						hasMoved = true;
 					} else if (
 						!next.willChange() && next.getValue() == cur.getValue()
 					) {
 						score += cur.getValue();
 						next.setValue(next.getValue() + cur.getValue());
 						cur.setValue(0);
+						hasMoved = true;
 					} else {
 						canExit = true;
 					}
@@ -136,15 +147,15 @@ public class World extends ActorWorld {
 	}
 
 	public ArrayList<Tile> getEmptyTiles() {
-		Grid<Actor> grid = getGrid();
 		ArrayList<Tile> emptyTiles = new ArrayList<>();
+		ArrayList<Tile> tiles = getTiles();
 
-		for (Location loc : grid.getOccupiedLocations()) {
-			Tile tile = (Tile) grid.get(loc);
+		for (Tile tile: tiles) {
 			if (tile.getValue() == 0) {
 				emptyTiles.add(tile);
 			}
 		}
+
 		return emptyTiles;
 	}
 
@@ -232,16 +243,46 @@ public class World extends ActorWorld {
 	}
 
 	public boolean isWinner() {
-		Grid<Actor> grid = getGrid();
-		ArrayList<Location> locs = grid.getOccupiedLocations();
-
-		for (Location loc : locs) {
-			Tile tile = (Tile) grid.get(loc);
-			if (tile.getValue() == 2048) {
+		ArrayList<Tile> tiles = getTiles();
+		for (Tile tile: tiles) {
+			if (tile.getValue() == 2048){
 				return true;
 			}
 		}
-
 		return false;
 	}
+
+
+
+	public boolean hasChanged(ArrayList beforeMappings, ArrayList afterMappings){
+		for (int i = 0; i < beforeMappings.size(); i++) {
+			if (beforeMappings.get(i) != afterMappings.get(i)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public ArrayList<Tile> getTiles(){
+		Grid<Actor> grid = getGrid();
+		ArrayList<Location> locs = grid.getOccupiedLocations();
+		ArrayList<Tile> tiles = new ArrayList<>();
+
+		for (Location loc : locs) {
+			tiles.add((Tile) grid.get(loc));
+		}
+
+		return tiles;
+	}
+
+	public ArrayList getValueMappings(ArrayList<Location> locations){
+		ArrayList values = new ArrayList();
+
+		for (Location loc : locations) {
+			Tile tile = (Tile) getGrid().get(loc);
+			values.add(tile.getValue());
+		}
+		return values;
+	}
+
 }
